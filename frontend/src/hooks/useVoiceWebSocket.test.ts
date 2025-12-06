@@ -45,6 +45,7 @@ describe("useVoiceWebSocket", () => {
 
       constructor(url: string) {
         this.url = url;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         mockWsInstance = this;
 
         // Auto-connect after a tick

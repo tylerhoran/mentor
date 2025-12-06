@@ -10,7 +10,7 @@ Report includes:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import structlog
@@ -51,7 +51,7 @@ class InteractionExcerpt:
     concept_id: str | None
     interactions: list[dict[str, Any]]
     note: str
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -172,7 +172,7 @@ class VerificationReportGenerator:
         return VerificationReport(
             student_id=student_id,
             course_id=course_id,
-            generated_at=datetime.now(timezone.utc),
+            generated_at=datetime.now(UTC),
             summary=summary,
             mastery_by_concept=mastery_by_concept,
             concerns=concerns,
@@ -266,7 +266,6 @@ class VerificationReportGenerator:
         questions = []
 
         # Priority 1: Concepts with gaming flags
-        flagged_concepts = set()
         for flag in concerns:
             if hasattr(flag, "concept_id") and flag.interaction_id:
                 # Would need to look up concept from interaction
@@ -409,7 +408,7 @@ class VerificationReportGenerator:
     def format_for_display(self, report: VerificationReport) -> str:
         """Format report as readable text for display."""
         lines = [
-            f"# Verification Report",
+            "# Verification Report",
             f"Student: {report.student_id}",
             f"Course: {self.course_name}",
             f"Generated: {report.generated_at.strftime('%Y-%m-%d %H:%M')}",

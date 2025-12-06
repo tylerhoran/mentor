@@ -1,11 +1,9 @@
 """WebSocket handler for voice tutoring sessions."""
 
-import asyncio
 import json
 import logging
-import uuid
+from collections.abc import Awaitable, Callable
 from datetime import datetime
-from typing import Awaitable, Callable, Optional
 
 import numpy as np
 from fastapi import WebSocket, WebSocketDisconnect
@@ -29,9 +27,9 @@ class VoiceWebSocketHandler:
 
     def __init__(self):
         self.config = get_voice_config()
-        self.stt: Optional[WhisperSTT] = None
-        self.vad: Optional[SileroVAD] = None
-        self.tts: Optional[TTSService] = None
+        self.stt: WhisperSTT | None = None
+        self.vad: SileroVAD | None = None
+        self.tts: TTSService | None = None
         self.gaming_detector = VoiceGamingDetector()
         self.session_manager = get_session_manager()
         self._initialized = False
@@ -318,7 +316,7 @@ class VoiceWebSocketHandler:
             logger.error(f"Invalid control message: {message}")
             await self._send_status(websocket, "error", {"message": "Invalid JSON"})
 
-    async def _send_status(self, websocket: WebSocket, status: str, data: Optional[dict] = None):
+    async def _send_status(self, websocket: WebSocket, status: str, data: dict | None = None):
         """Send a JSON status message to the client."""
         message = {"status": status}
         if data:
@@ -327,7 +325,7 @@ class VoiceWebSocketHandler:
 
 
 # Singleton handler
-_voice_handler: Optional[VoiceWebSocketHandler] = None
+_voice_handler: VoiceWebSocketHandler | None = None
 
 
 def get_voice_handler() -> VoiceWebSocketHandler:

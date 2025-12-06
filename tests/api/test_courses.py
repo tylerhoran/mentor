@@ -1,8 +1,8 @@
 """Tests for course routes."""
 
 import uuid
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from datetime import UTC, datetime
+from unittest.mock import Mock
 
 import pytest
 
@@ -263,8 +263,8 @@ class TestCourseEnrollment:
     async def test_list_enrollments(self, mock_db_session, sample_course_id):
         """Test listing course enrollments."""
         mock_enrollments = [
-            Mock(student_id=uuid.uuid4(), enrolled_at=datetime.now(timezone.utc)),
-            Mock(student_id=uuid.uuid4(), enrolled_at=datetime.now(timezone.utc)),
+            Mock(student_id=uuid.uuid4(), enrolled_at=datetime.now(UTC)),
+            Mock(student_id=uuid.uuid4(), enrolled_at=datetime.now(UTC)),
         ]
 
         result = Mock()

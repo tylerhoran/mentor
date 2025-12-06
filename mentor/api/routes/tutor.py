@@ -1,14 +1,13 @@
 """Tutoring session routes."""
 
-from datetime import datetime, timezone
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 from mentor.api.deps import CurrentStudent, CurrentUser, DbSession
 from mentor.models import Concept, Course, CourseEnrollment, Interaction, StudentState
@@ -82,7 +81,7 @@ async def start_session(
 
     # Create session
     session_id = str(uuid4())
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     # Store session in memory (use Redis in production)
     active_sessions[session_id] = {
@@ -154,7 +153,7 @@ async def send_message(
         tutor_response=tutor_response,
         response_time_ms=message.response_time_ms,
         pedagogical_move="scaffold",  # TODO: Determine from DialogueManager
-        timestamp=datetime.now(timezone.utc),
+        timestamp=datetime.now(UTC),
     )
     db.add(interaction)
     await db.flush()
@@ -308,7 +307,7 @@ async def end_session(
 
     # Calculate duration
     started_at = session["started_at"]
-    ended_at = datetime.now(timezone.utc)
+    ended_at = datetime.now(UTC)
     duration_seconds = int((ended_at - started_at).total_seconds())
 
     # Update student state with session time

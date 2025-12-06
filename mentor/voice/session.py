@@ -4,7 +4,6 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
 
 import numpy as np
 
@@ -31,10 +30,10 @@ class VoiceInteraction:
     response_latency_ms: int = 0  # Time from end of speech to start of response
 
     # Prosodic features (for gaming detection)
-    speech_rate_wpm: Optional[float] = None
+    speech_rate_wpm: float | None = None
     pause_count: int = 0
     average_pause_duration_ms: float = 0.0
-    pitch_variation: Optional[float] = None
+    pitch_variation: float | None = None
 
     # Output
     tutor_response_text: str = ""
@@ -42,7 +41,7 @@ class VoiceInteraction:
     tts_engine_used: str = ""
 
     # Gaming analysis
-    gaming_flags: List[str] = field(default_factory=list)
+    gaming_flags: list[str] = field(default_factory=list)
     gaming_confidence: float = 0.0
 
 
@@ -58,7 +57,7 @@ class VoiceSession:
     created_at: datetime = field(default_factory=datetime.utcnow)
     last_activity: datetime = field(default_factory=datetime.utcnow)
 
-    interactions: List[VoiceInteraction] = field(default_factory=list)
+    interactions: list[VoiceInteraction] = field(default_factory=list)
 
     # Session metrics
     total_student_speech_ms: int = 0
@@ -66,7 +65,7 @@ class VoiceSession:
     total_interactions: int = 0
 
     # Current audio buffer (not persisted)
-    audio_buffer: Optional[np.ndarray] = field(default=None, repr=False)
+    audio_buffer: np.ndarray | None = field(default=None, repr=False)
 
     def add_interaction(self, interaction: VoiceInteraction):
         """Add an interaction and update metrics."""
@@ -89,11 +88,11 @@ class VoiceSession:
             return float("inf")
         return self.total_student_speech_ms / self.total_tutor_speech_ms
 
-    def get_recent_interactions(self, count: int = 10) -> List[VoiceInteraction]:
+    def get_recent_interactions(self, count: int = 10) -> list[VoiceInteraction]:
         """Get the most recent interactions."""
         return self.interactions[-count:] if self.interactions else []
 
-    def get_average_speech_rate(self) -> Optional[float]:
+    def get_average_speech_rate(self) -> float | None:
         """Get average speech rate across interactions."""
         rates = [i.speech_rate_wpm for i in self.interactions if i.speech_rate_wpm]
         return sum(rates) / len(rates) if rates else None
@@ -122,7 +121,7 @@ class VoiceSessionManager:
         self.sessions: dict[str, VoiceSession] = {}
 
     def create_session(
-        self, student_id: str, course_id: str, session_id: Optional[str] = None
+        self, student_id: str, course_id: str, session_id: str | None = None
     ) -> VoiceSession:
         """Create a new voice session."""
         session_id = session_id or str(uuid.uuid4())
@@ -130,19 +129,19 @@ class VoiceSessionManager:
         self.sessions[session_id] = session
         return session
 
-    def get_session(self, session_id: str) -> Optional[VoiceSession]:
+    def get_session(self, session_id: str) -> VoiceSession | None:
         """Get a session by ID."""
         return self.sessions.get(session_id)
 
-    def remove_session(self, session_id: str) -> Optional[VoiceSession]:
+    def remove_session(self, session_id: str) -> VoiceSession | None:
         """Remove and return a session."""
         return self.sessions.pop(session_id, None)
 
-    def get_student_sessions(self, student_id: str) -> List[VoiceSession]:
+    def get_student_sessions(self, student_id: str) -> list[VoiceSession]:
         """Get all sessions for a student."""
         return [s for s in self.sessions.values() if s.student_id == student_id]
 
-    def get_course_sessions(self, course_id: str) -> List[VoiceSession]:
+    def get_course_sessions(self, course_id: str) -> list[VoiceSession]:
         """Get all sessions for a course."""
         return [s for s in self.sessions.values() if s.course_id == course_id]
 
@@ -163,7 +162,7 @@ class VoiceSessionManager:
 
 
 # Global session manager
-_session_manager: Optional[VoiceSessionManager] = None
+_session_manager: VoiceSessionManager | None = None
 
 
 def get_session_manager() -> VoiceSessionManager:

@@ -1,8 +1,6 @@
 """Tests for analytics schemas."""
 
-from datetime import datetime, timezone
-
-import pytest
+from datetime import UTC, datetime
 
 from mentor.schemas.analytics import (
     ClassOverview,
@@ -21,7 +19,7 @@ class TestEngagementStats:
 
     def test_engagement_stats_creation(self):
         """Test creating engagement stats."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         stats = EngagementStats(
             total_interactions=100,
             total_time_minutes=120.5,
@@ -73,7 +71,7 @@ class TestStudentSummary:
 
     def test_student_summary(self):
         """Test student summary schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         engagement = EngagementStats(
             total_interactions=50,
             total_time_minutes=60,
@@ -160,7 +158,7 @@ class TestClassOverview:
 
     def test_class_overview(self):
         """Test class overview schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         engagement = EngagementStats(
             total_interactions=500,
             total_time_minutes=1200,
@@ -215,7 +213,7 @@ class TestStudentProgressResponse:
 
     def test_student_progress(self):
         """Test student progress response schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         engagement = EngagementStats(
             total_interactions=75,
             total_time_minutes=90,
@@ -255,7 +253,7 @@ class TestTimeSeriesDataPoint:
 
     def test_time_series_data_point(self):
         """Test time series data point."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         point = TimeSeriesDataPoint(timestamp=now, value=0.75)
 
         assert point.value == 0.75
@@ -266,7 +264,7 @@ class TestProgressTimeline:
 
     def test_progress_timeline(self):
         """Test progress timeline schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         mastery_points = [
             TimeSeriesDataPoint(timestamp=now, value=0.5),
             TimeSeriesDataPoint(timestamp=now, value=0.65),

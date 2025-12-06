@@ -8,7 +8,7 @@ System uses these to:
 - Apply appropriate correction strategies
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 import yaml
@@ -87,7 +87,7 @@ class MisconceptionLibrary:
 
     def remove_misconception(self, misconception_id: str) -> bool:
         """Remove a misconception by ID."""
-        for concept_id, misconceptions in self._misconceptions.items():
+        for _concept_id, misconceptions in self._misconceptions.items():
             for i, m in enumerate(misconceptions):
                 if m.id == misconception_id:
                     del misconceptions[i]

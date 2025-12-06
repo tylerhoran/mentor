@@ -9,7 +9,7 @@ Monitors:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 
@@ -113,7 +113,7 @@ class EngagementTracker:
         """Start tracking a new session."""
         self._current_session = SessionMetrics(
             session_id=session_id,
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
         )
         self._metrics.session_count += 1
         self._metrics.last_session_at = self._current_session.start_time
@@ -129,7 +129,7 @@ class EngagementTracker:
         if not self._current_session:
             return None
 
-        self._current_session.end_time = datetime.now(timezone.utc)
+        self._current_session.end_time = datetime.now(UTC)
         self._metrics.total_time_seconds += self._current_session.duration_seconds
 
         session = self._current_session
@@ -147,7 +147,7 @@ class EngagementTracker:
         self._metrics.total_interactions += 1
 
         # Track daily interactions
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        today = datetime.now(UTC).strftime("%Y-%m-%d")
         self._metrics.interactions_by_day[today] = (
             self._metrics.interactions_by_day.get(today, 0) + 1
         )
@@ -208,7 +208,7 @@ class EngagementTracker:
         # Recency (up to 25 points)
         # Recent activity scores higher
         if self._metrics.last_session_at:
-            days_since = (datetime.now(timezone.utc) - self._metrics.last_session_at).days
+            days_since = (datetime.now(UTC) - self._metrics.last_session_at).days
             if days_since == 0:
                 recency_score = 25
             elif days_since <= 7:
@@ -232,7 +232,7 @@ class EngagementTracker:
             List of daily activity data
         """
         trend = []
-        today = datetime.now(timezone.utc).date()
+        today = datetime.now(UTC).date()
 
         for i in range(days):
             date = today - timedelta(days=i)
@@ -252,7 +252,7 @@ class EngagementTracker:
         if not self._metrics.last_session_at:
             return False
 
-        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        cutoff = datetime.now(UTC) - timedelta(days=days)
         return self._metrics.last_session_at > cutoff
 
     def get_response_time_stats(self) -> dict[str, float | None]:

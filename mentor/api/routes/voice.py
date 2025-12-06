@@ -1,23 +1,22 @@
 """Voice API routes for Mentor."""
 
+import contextlib
+import importlib.util
 import io
 import logging
-import shutil
 import uuid
 from pathlib import Path
-from typing import Optional
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, WebSocket
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile, WebSocket
 from fastapi.responses import Response
 
-from ...models.user import User
-from ...voice.config import VoiceConfig, get_voice_config
+from ...voice.config import get_voice_config
 from ...voice.gaming_detection import VoiceGamingDetector
 from ...voice.session import get_session_manager
 from ...voice.stt.whisper_service import get_whisper_stt
 from ...voice.tts.hybrid import get_tts_service
 from ...voice.websocket import get_voice_handler
-from ..deps import get_current_user, get_db
 
 logger = logging.getLogger(__name__)
 
@@ -30,13 +29,10 @@ async def get_tutor_response_stub(message: str, session_id: str) -> str:
 
     In production, this would call the dialogue manager from tutor_runtime.
     """
-    # Import here to avoid circular imports
-    try:
-        from ...core.tutor_runtime.dialogue_manager import DialogueManager
-        # Would need to get the actual dialogue manager instance
-        # For now, return a placeholder
-    except ImportError:
-        pass
+    # Check if dialogue manager is available
+    if importlib.util.find_spec("mentor.core.tutor_runtime.dialogue_manager"):
+        with contextlib.suppress(ImportError):
+            pass  # Would need to get the actual dialogue manager instance
 
     # Placeholder response for testing
     if "?" in message:
@@ -49,7 +45,7 @@ async def get_tutor_response_stub(message: str, session_id: str) -> str:
 async def voice_session(
     websocket: WebSocket,
     course_id: str,
-    session_id: Optional[str] = Query(None),
+    session_id: str | None = Query(None),
 ):
     """
     WebSocket endpoint for voice tutoring sessions.
@@ -82,8 +78,7 @@ async def voice_session(
     # Generate IDs if not provided
     if not session_id:
         session_id = str(uuid.uuid4())
-    if not student_id:
-        student_id = "anonymous"
+    student_id = "anonymous"  # TODO: Get from auth token in production
 
     # TODO: In production, validate student enrollment in course
     # and authenticate via token
@@ -115,7 +110,7 @@ async def get_voice_configuration():
 
 @router.post("/voice-sample")
 async def upload_voice_sample(
-    file: UploadFile = File(...),
+    file: Annotated[UploadFile, File(...)],
     # current_user: User = Depends(get_current_user)  # Uncomment in production
 ):
     """
@@ -177,7 +172,7 @@ async def delete_voice_sample(
 @router.post("/test-tts")
 async def test_tts(
     text: str = Query(..., min_length=1, max_length=1000),
-    engine: Optional[str] = Query(None, description="Force specific engine: piper or xtts"),
+    engine: str | None = Query(None, description="Force specific engine: piper or xtts"),
 ):
     """
     Test TTS with given text.
@@ -198,12 +193,12 @@ async def test_tts(
         )
     except Exception as e:
         logger.error(f"TTS test failed: {e}")
-        raise HTTPException(500, f"TTS synthesis failed: {str(e)}")
+        raise HTTPException(500, f"TTS synthesis failed: {str(e)}") from e
 
 
 @router.post("/test-stt")
 async def test_stt(
-    file: UploadFile = File(...),
+    file: Annotated[UploadFile, File(...)],
     with_timestamps: bool = Query(False, description="Include word timestamps"),
 ):
     """
@@ -244,16 +239,16 @@ async def test_stt(
             return {"transcription": transcription}
 
     except ImportError as e:
-        raise HTTPException(500, f"Missing dependency: {str(e)}")
+        raise HTTPException(500, f"Missing dependency: {str(e)}") from e
     except Exception as e:
         logger.error(f"STT test failed: {e}")
-        raise HTTPException(500, f"STT transcription failed: {str(e)}")
+        raise HTTPException(500, f"STT transcription failed: {str(e)}") from e
 
 
 @router.get("/sessions")
 async def list_voice_sessions(
-    course_id: Optional[str] = None,
-    student_id: Optional[str] = None,
+    course_id: str | None = None,
+    student_id: str | None = None,
     # current_user: User = Depends(get_current_user)  # Uncomment in production
 ):
     """List active voice sessions."""
@@ -353,7 +348,7 @@ async def voice_health_check():
         pass
 
     try:
-        tts = get_tts_service()
+        get_tts_service()
         status["tts"] = True
     except Exception:
         pass

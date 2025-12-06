@@ -15,7 +15,6 @@ vi.mock("react-router-dom", async () => {
 });
 
 // Mock API
-const mockStream = vi.fn();
 vi.mock("../../api/client", () => ({
   api: {
     get: vi.fn(),
@@ -77,7 +76,7 @@ describe("TutorSession", () => {
         <BrowserRouter>
           <TutorSession />
         </BrowserRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
   };
 
@@ -92,7 +91,7 @@ describe("TutorSession", () => {
       mockApi.get.mockResolvedValueOnce(mockSession);
       renderTutorSession();
       expect(
-        await screen.findByText(/currently discussing: neural networks/i)
+        await screen.findByText(/currently discussing: neural networks/i),
       ).toBeInTheDocument();
     });
 
@@ -108,7 +107,7 @@ describe("TutorSession", () => {
       mockApi.get.mockResolvedValueOnce(mockSession);
       renderTutorSession();
       expect(
-        await screen.findByRole("button", { name: /view progress/i })
+        await screen.findByRole("button", { name: /view progress/i }),
       ).toBeInTheDocument();
     });
   });
@@ -118,7 +117,7 @@ describe("TutorSession", () => {
       mockApi.get.mockResolvedValueOnce(mockSession);
       renderTutorSession();
       expect(
-        await screen.findByText(/welcome to your tutoring session/i)
+        await screen.findByText(/welcome to your tutoring session/i),
       ).toBeInTheDocument();
     });
 
@@ -132,7 +131,7 @@ describe("TutorSession", () => {
       mockApi.get.mockResolvedValueOnce(mockSession);
       renderTutorSession();
       expect(
-        await screen.findByText(/ask me anything about the course material/i)
+        await screen.findByText(/ask me anything about the course material/i),
       ).toBeInTheDocument();
     });
 
@@ -140,13 +139,15 @@ describe("TutorSession", () => {
       mockApi.get.mockResolvedValueOnce(mockSession);
       renderTutorSession();
       expect(
-        await screen.findByRole("button", { name: /explain the main concept/i })
+        await screen.findByRole("button", {
+          name: /explain the main concept/i,
+        }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /give me a practice problem/i })
+        screen.getByRole("button", { name: /give me a practice problem/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /review what we covered/i })
+        screen.getByRole("button", { name: /review what we covered/i }),
       ).toBeInTheDocument();
     });
 
@@ -170,10 +171,10 @@ describe("TutorSession", () => {
       mockApi.get.mockResolvedValueOnce(mockSessionWithMessages);
       renderTutorSession();
       expect(
-        await screen.findByText("What is a neural network?")
+        await screen.findByText("What is a neural network?"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("A neural network is a computational model...")
+        screen.getByText("A neural network is a computational model..."),
       ).toBeInTheDocument();
     });
 
@@ -182,7 +183,7 @@ describe("TutorSession", () => {
       renderTutorSession();
       await screen.findByText("What is a neural network?");
       expect(
-        screen.queryByText(/welcome to your tutoring session/i)
+        screen.queryByText(/welcome to your tutoring session/i),
       ).not.toBeInTheDocument();
     });
 
@@ -198,7 +199,7 @@ describe("TutorSession", () => {
       mockApi.get.mockResolvedValueOnce(mockSession);
       renderTutorSession();
       expect(
-        await screen.findByPlaceholderText(/type your message/i)
+        await screen.findByPlaceholderText(/type your message/i),
       ).toBeInTheDocument();
     });
 
@@ -206,7 +207,7 @@ describe("TutorSession", () => {
       mockApi.get.mockResolvedValueOnce(mockSession);
       renderTutorSession();
       expect(
-        await screen.findByRole("button", { name: /send/i })
+        await screen.findByRole("button", { name: /send/i }),
       ).toBeInTheDocument();
     });
 
@@ -245,9 +246,13 @@ describe("TutorSession", () => {
       const user = userEvent.setup();
       mockApi.get.mockResolvedValueOnce(mockSession);
       mockApi.stream.mockImplementation(
-        async (_url: string, _data: unknown, callback: (chunk: string) => void) => {
+        async (
+          _url: string,
+          _data: unknown,
+          callback: (chunk: string) => void,
+        ) => {
           callback("This is the response");
-        }
+        },
       );
       renderTutorSession();
 
@@ -289,7 +294,7 @@ describe("TutorSession", () => {
         expect(mockApi.stream).toHaveBeenCalledWith(
           "/tutor/message/course-123",
           { message: "Explain AI" },
-          expect.any(Function)
+          expect.any(Function),
         );
       });
     });
@@ -307,7 +312,9 @@ describe("TutorSession", () => {
       });
       renderTutorSession();
       expect(await screen.findByText("Mastery Updated!")).toBeInTheDocument();
-      expect(screen.getByText(/neural networks: 50% → 70%/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/neural networks: 50% → 70%/i),
+      ).toBeInTheDocument();
     });
   });
 });

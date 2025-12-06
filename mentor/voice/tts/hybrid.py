@@ -2,7 +2,7 @@
 
 import logging
 import re
-from typing import AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
 
 from ..config import TTSEngine, VoiceConfig, get_voice_config
 from .base import TTSService
@@ -38,10 +38,10 @@ class HybridTTS(TTSService):
         r"^well,?\s",
     ]
 
-    def __init__(self, config: Optional[VoiceConfig] = None):
+    def __init__(self, config: VoiceConfig | None = None):
         self.config = config or get_voice_config()
-        self.fast_tts: Optional[TTSService] = None
-        self.quality_tts: Optional[TTSService] = None
+        self.fast_tts: TTSService | None = None
+        self.quality_tts: TTSService | None = None
         self._init_engines()
 
         # Compile patterns
@@ -70,11 +70,7 @@ class HybridTTS(TTSService):
 
         # Acknowledgment patterns
         text_clean = text.strip().lower()
-        for pattern in self._ack_patterns:
-            if pattern.match(text_clean):
-                return True
-
-        return False
+        return any(pattern.match(text_clean) for pattern in self._ack_patterns)
 
     def _get_available_engine(self, prefer_fast: bool) -> TTSService:
         """Get an available TTS engine."""
@@ -141,7 +137,7 @@ class HybridTTS(TTSService):
         return "piper" if self._should_use_fast(text) else "xtts"
 
 
-def get_tts_service(config: Optional[VoiceConfig] = None) -> TTSService:
+def get_tts_service(config: VoiceConfig | None = None) -> TTSService:
     """Factory function for TTS service based on configuration."""
     config = config or get_voice_config()
 

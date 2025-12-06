@@ -15,7 +15,8 @@ Features:
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator
+from collections.abc import AsyncGenerator
+from typing import Any
 
 import httpx
 import structlog
@@ -268,8 +269,10 @@ class AnthropicClient(LLMClient):
         """Generate response using Anthropic API."""
         try:
             from anthropic import AsyncAnthropic
-        except ImportError:
-            raise ImportError("anthropic package required. Install with: pip install anthropic")
+        except ImportError as err:
+            raise ImportError(
+                "anthropic package required. Install with: pip install anthropic"
+            ) from err
 
         client = AsyncAnthropic(api_key=self.api_key)
 
@@ -321,7 +324,7 @@ class AnthropicClient(LLMClient):
         try:
             from anthropic import AsyncAnthropic
 
-            client = AsyncAnthropic(api_key=self.api_key)
+            AsyncAnthropic(api_key=self.api_key)
             # Anthropic doesn't have a public token counting API
             # Use tiktoken as approximation
             import tiktoken
@@ -354,8 +357,10 @@ class OpenAIClient(LLMClient):
                 from openai import AsyncOpenAI
 
                 self._client = AsyncOpenAI(api_key=self.api_key)
-            except ImportError:
-                raise ImportError("openai package required. Install with: pip install openai")
+            except ImportError as err:
+                raise ImportError(
+                    "openai package required. Install with: pip install openai"
+                ) from err
         return self._client
 
     async def generate(

@@ -60,10 +60,9 @@ async def list_courses(
     elif current_user.is_student:
         # Students see courses they're enrolled in
         query = query.join(CourseEnrollment).where(CourseEnrollment.student_id == current_user.id)
-    elif current_user.is_admin or current_user.is_researcher:
+    elif (current_user.is_admin or current_user.is_researcher) and current_user.institution_id:
         # Admin/researchers see all courses in their institution
-        if current_user.institution_id:
-            query = query.where(Course.institution_id == current_user.institution_id)
+        query = query.where(Course.institution_id == current_user.institution_id)
 
     if not include_archived:
         query = query.where(Course.status != "archived")

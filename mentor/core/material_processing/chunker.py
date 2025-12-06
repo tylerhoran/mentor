@@ -90,7 +90,6 @@ class SemanticChunker:
     def _chunk_by_sections(self, structure: dict[str, Any]) -> list[Chunk]:
         """Chunk document using section structure."""
         chunks = []
-        current_heading = None
 
         for section in structure.get("sections", []):
             heading = section.get("heading", "")
@@ -104,7 +103,6 @@ class SemanticChunker:
             if not content.strip():
                 continue
 
-            current_heading = heading
 
             # Determine chunk type from heading
             chunk_type = self._infer_chunk_type(heading, content)

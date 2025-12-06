@@ -6,8 +6,6 @@ from unittest.mock import MagicMock, Mock, patch
 import numpy as np
 import pytest
 
-from mentor.voice.config import STTModel, VoiceConfig
-
 
 class TestWhisperSTT:
     """Tests for WhisperSTT class."""
@@ -178,9 +176,9 @@ class TestWhisperSTT:
         """Test transcription when model loading fails."""
         from mentor.voice.stt.whisper_service import WhisperSTT
 
-        self.mock_whisper_model.side_effect = Exception("Model load failed")
+        self.mock_whisper_model.side_effect = RuntimeError("Model load failed")
 
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError, match="Model load failed"):
             WhisperSTT(voice_config)
 
 

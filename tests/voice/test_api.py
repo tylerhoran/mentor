@@ -1,8 +1,7 @@
 """Tests for voice API routes."""
 
 import io
-import json
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import numpy as np
 import pytest
@@ -64,12 +63,11 @@ class TestVoiceSampleEndpoints:
             config.voice_sample_path = None
             mock_config.return_value = config
 
-            with patch("pathlib.Path.mkdir"):
-                with patch("builtins.open", create=True):
-                    response = client.post(
-                        "/api/voice/voice-sample",
-                        files={"file": ("test.wav", io.BytesIO(audio_content), "audio/wav")},
-                    )
+            with patch("pathlib.Path.mkdir"), patch("builtins.open", create=True):
+                response = client.post(
+                    "/api/voice/voice-sample",
+                    files={"file": ("test.wav", io.BytesIO(audio_content), "audio/wav")},
+                )
 
         assert response.status_code == 200
         data = response.json()
@@ -340,20 +338,20 @@ class TestHealthEndpoint:
 
     def test_health_all_services_available(self, client):
         """Test health check with all services available."""
-        with patch("mentor.api.routes.voice.get_whisper_stt") as mock_stt:
+        with (
+            patch("mentor.api.routes.voice.get_whisper_stt") as mock_stt,
+            patch("mentor.voice.stt.vad.get_vad") as mock_vad,
+            patch("mentor.api.routes.voice.get_tts_service"),
+            patch("mentor.api.routes.voice.get_voice_config") as mock_config,
+        ):
             mock_stt.return_value = Mock(model=Mock())
+            mock_vad.return_value = Mock(model=Mock())
+            mock_config.return_value = Mock(
+                sample_rate=16000,
+                tts_engine="hybrid",
+            )
 
-            with patch("mentor.voice.stt.vad.get_vad") as mock_vad:
-                mock_vad.return_value = Mock(model=Mock())
-
-                with patch("mentor.api.routes.voice.get_tts_service"):
-                    with patch("mentor.api.routes.voice.get_voice_config") as mock_config:
-                        mock_config.return_value = Mock(
-                            sample_rate=16000,
-                            tts_engine="hybrid",
-                        )
-
-                        response = client.get("/api/voice/health")
+            response = client.get("/api/voice/health")
 
         assert response.status_code == 200
         data = response.json()
@@ -362,15 +360,17 @@ class TestHealthEndpoint:
 
     def test_health_partial_services(self, client):
         """Test health check with some services unavailable."""
-        with patch("mentor.api.routes.voice.get_whisper_stt", side_effect=Exception):
-            with patch("mentor.api.routes.voice.get_tts_service", side_effect=Exception):
-                with patch("mentor.api.routes.voice.get_voice_config") as mock_config:
-                    mock_config.return_value = Mock(
-                        sample_rate=16000,
-                        tts_engine="hybrid",
-                    )
+        with (
+            patch("mentor.api.routes.voice.get_whisper_stt", side_effect=Exception),
+            patch("mentor.api.routes.voice.get_tts_service", side_effect=Exception),
+            patch("mentor.api.routes.voice.get_voice_config") as mock_config,
+        ):
+            mock_config.return_value = Mock(
+                sample_rate=16000,
+                tts_engine="hybrid",
+            )
 
-                    response = client.get("/api/voice/health")
+            response = client.get("/api/voice/health")
 
         assert response.status_code == 200
         data = response.json()

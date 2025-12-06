@@ -11,13 +11,11 @@ Features:
 from dataclasses import dataclass
 from typing import Any
 
-import numpy as np
 import structlog
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from mentor.core.material_processing.embedder import Embedder, get_embedder
-from mentor.models import MaterialChunk
 
 logger = structlog.get_logger()
 

@@ -3,8 +3,8 @@
 import asyncio
 import io
 import logging
+from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import AsyncGenerator, Optional
 
 import numpy as np
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class XTTS(TTSService):
     """High-quality TTS using Coqui XTTS with voice cloning capability."""
 
-    def __init__(self, config: Optional[VoiceConfig] = None):
+    def __init__(self, config: VoiceConfig | None = None):
         self.config = config or get_voice_config()
         self.tts = None
         self._device = "cpu"

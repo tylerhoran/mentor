@@ -1,7 +1,7 @@
 """Abstract base class for TTS services."""
 
 from abc import ABC, abstractmethod
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 
 class TTSService(ABC):
@@ -42,5 +42,9 @@ class TTSService(ABC):
         pass
 
     async def warmup(self) -> None:
-        """Optional warmup to preload models."""
-        pass
+        """Optional warmup to preload models.
+
+        Subclasses can override this to perform initialization
+        that benefits from being done ahead of time.
+        """
+        return None

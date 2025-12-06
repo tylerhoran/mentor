@@ -1,12 +1,9 @@
 """Tests for authentication routes."""
 
 import uuid
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 import pytest
 from fastapi import HTTPException
-
-from mentor.models import User
 
 
 class TestAuthHelpers:

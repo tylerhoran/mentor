@@ -1,7 +1,7 @@
 """Speech-to-text using faster-whisper."""
 
 import logging
-from typing import Generator, Optional
+from collections.abc import Generator
 
 import numpy as np
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class WhisperSTT:
     """Speech-to-text using faster-whisper."""
 
-    def __init__(self, config: Optional[VoiceConfig] = None):
+    def __init__(self, config: VoiceConfig | None = None):
         self.config = config or get_voice_config()
         self.model = None
         self._load_model()
@@ -39,7 +39,7 @@ class WhisperSTT:
             logger.error(f"Failed to load Whisper model: {e}")
             raise
 
-    def transcribe(self, audio: np.ndarray, language: Optional[str] = None) -> str:
+    def transcribe(self, audio: np.ndarray, language: str | None = None) -> str:
         """
         Transcribe audio to text.
 
@@ -63,7 +63,7 @@ class WhisperSTT:
             temperature=0.0,
             condition_on_previous_text=True,
             vad_filter=True,
-            vad_parameters=dict(min_silence_duration_ms=500, speech_pad_ms=400),
+            vad_parameters={"min_silence_duration_ms": 500, "speech_pad_ms": 400},
         )
 
         # Combine all segments
@@ -71,7 +71,7 @@ class WhisperSTT:
         return text.strip()
 
     def transcribe_with_timestamps(
-        self, audio: np.ndarray, language: Optional[str] = None
+        self, audio: np.ndarray, language: str | None = None
     ) -> list[dict]:
         """
         Transcribe audio with word-level timestamps.
@@ -146,10 +146,7 @@ class WhisperSTT:
         total_duration = words[-1]["end"] - words[0]["start"]
         word_count = len(words)
 
-        if total_duration > 0:
-            speech_rate_wpm = (word_count / total_duration) * 60
-        else:
-            speech_rate_wpm = 0
+        speech_rate_wpm = word_count / total_duration * 60 if total_duration > 0 else 0
 
         # Count pauses (gaps > 300ms between words)
         pause_threshold_s = 0.3
@@ -168,7 +165,7 @@ class WhisperSTT:
 
 
 # Singleton instance
-_whisper_instance: Optional[WhisperSTT] = None
+_whisper_instance: WhisperSTT | None = None
 
 
 def get_whisper_stt() -> WhisperSTT:

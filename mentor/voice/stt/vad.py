@@ -3,7 +3,6 @@
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 import numpy as np
 
@@ -23,7 +22,7 @@ class VADResult:
     """Result from VAD processing."""
 
     state: SpeechState
-    audio: Optional[np.ndarray] = None
+    audio: np.ndarray | None = None
     speech_probability: float = 0.0
     duration_ms: int = 0
 
@@ -31,7 +30,7 @@ class VADResult:
 class SileroVAD:
     """Voice Activity Detection using Silero VAD."""
 
-    def __init__(self, config: Optional[VoiceConfig] = None):
+    def __init__(self, config: VoiceConfig | None = None):
         self.config = config or get_voice_config()
         self.model = None
         self.utils = None
@@ -93,7 +92,7 @@ class SileroVAD:
         # Get speech probability
         speech_prob = self.model(audio_tensor, self.config.sample_rate).item()
 
-        chunk_duration_ms = len(audio_chunk) * 1000 // self.config.sample_rate
+        len(audio_chunk) * 1000 // self.config.sample_rate
 
         if speech_prob >= self.config.vad_threshold:
             # Speech detected
@@ -164,7 +163,7 @@ class SileroVAD:
         if self.model is not None:
             self.model.reset_states()
 
-    def get_current_audio(self) -> Optional[np.ndarray]:
+    def get_current_audio(self) -> np.ndarray | None:
         """Get the current audio buffer without resetting."""
         if len(self.speech_buffer) > 0:
             return self.speech_buffer.copy()
@@ -172,7 +171,7 @@ class SileroVAD:
 
 
 # Singleton
-_vad_instance: Optional[SileroVAD] = None
+_vad_instance: SileroVAD | None = None
 
 
 def get_vad() -> SileroVAD:

@@ -1,8 +1,8 @@
 """Assessment and verification routes."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -12,7 +12,6 @@ from mentor.models import (
     Course,
     Interaction,
     StudentState,
-    User,
     VerificationReport,
 )
 from mentor.schemas.assessment import (
@@ -93,7 +92,7 @@ async def get_mastery_report(
         concepts=mastery_estimates,
         concepts_completed=state.concepts_completed or [],
         current_concept_id=state.current_concept_id,
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
     )
 
 
@@ -132,7 +131,7 @@ async def get_trajectory_analysis(
         GamingFlag(
             type=flag.get("type", "unknown"),
             severity=flag.get("severity", "low"),
-            timestamp=flag.get("timestamp", datetime.now(timezone.utc)),
+            timestamp=flag.get("timestamp", datetime.now(UTC)),
             evidence=flag.get("evidence", ""),
             interaction_id=flag.get("interaction_id"),
             resolved=flag.get("resolved", False),
@@ -164,7 +163,7 @@ async def get_trajectory_analysis(
         confidence=confidence,
         gaming_flags=gaming_flags,
         analysis_summary=analysis_summary,
-        analyzed_at=datetime.now(timezone.utc),
+        analyzed_at=datetime.now(UTC),
     )
 
 
@@ -235,7 +234,7 @@ async def generate_verification_report(
         GamingFlag(
             type=flag.get("type", "unknown"),
             severity=flag.get("severity", "low"),
-            timestamp=flag.get("timestamp", datetime.now(timezone.utc)),
+            timestamp=flag.get("timestamp", datetime.now(UTC)),
             evidence=flag.get("evidence", ""),
             resolved=flag.get("resolved", False),
         )
@@ -358,7 +357,7 @@ async def complete_verification(
     # Update report
     report.verification_status = "completed"
     report.verified_by = current_user.id
-    report.verified_at = datetime.now(timezone.utc)
+    report.verified_at = datetime.now(UTC)
     report.verification_notes = results.verification_notes
     report.assessment_scores = results.assessment_scores
     report.overall_assessment = results.overall_assessment
@@ -368,7 +367,7 @@ async def complete_verification(
 
     # Get concepts for names
     result = await db.execute(select(Concept).where(Concept.course_id == report.course_id))
-    concepts = {c.id: c for c in result.scalars().all()}
+    {c.id: c for c in result.scalars().all()}
 
     # Rebuild response objects from report_data
     mastery_by_concept = [

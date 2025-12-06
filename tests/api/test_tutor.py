@@ -1,8 +1,8 @@
 """Tests for tutor session routes."""
 
 import uuid
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from datetime import UTC, datetime
+from unittest.mock import Mock
 
 import pytest
 
@@ -133,13 +133,13 @@ class TestSessionHistory:
                 id=uuid.uuid4(),
                 student_message="Hello",
                 tutor_response="Hi there!",
-                timestamp=datetime.now(timezone.utc),
+                timestamp=datetime.now(UTC),
             ),
             Mock(
                 id=uuid.uuid4(),
                 student_message="What is x?",
                 tutor_response="Let me explain...",
-                timestamp=datetime.now(timezone.utc),
+                timestamp=datetime.now(UTC),
             ),
         ]
 
@@ -175,7 +175,7 @@ class TestSessionEnd:
     async def test_end_session_already_ended(self, mock_db_session):
         """Test ending an already ended session."""
         mock_session = Mock()
-        mock_session.ended_at = datetime.now(timezone.utc)
+        mock_session.ended_at = datetime.now(UTC)
 
         # Should handle gracefully or return error
 
@@ -186,7 +186,7 @@ class TestConceptNavigation:
     @pytest.mark.asyncio
     async def test_set_current_concept(self, mock_db_session):
         """Test setting current concept in session."""
-        concept_id = str(uuid.uuid4())
+        str(uuid.uuid4())
 
         # Should update session's current concept
 

@@ -1,10 +1,7 @@
 """Tests for voice configuration."""
 
 import os
-from pathlib import Path
 from unittest.mock import patch
-
-import pytest
 
 from mentor.voice import config as config_module
 from mentor.voice.config import (

@@ -1,6 +1,6 @@
 """Analytics routes for faculty dashboards."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import func, select
@@ -68,11 +68,11 @@ async def get_class_overview(
             struggling_concepts=[],
             students_with_gaming_flags=0,
             completion_rate=0.0,
-            generated_at=datetime.now(timezone.utc),
+            generated_at=datetime.now(UTC),
         )
 
     # Calculate active students (last 7 days)
-    seven_days_ago = datetime.now(timezone.utc) - timedelta(days=7)
+    seven_days_ago = datetime.now(UTC) - timedelta(days=7)
     active_students = sum(
         1
         for s in states
@@ -178,7 +178,7 @@ async def get_class_overview(
         struggling_concepts=struggling_concepts,
         students_with_gaming_flags=students_with_gaming_flags,
         completion_rate=completion_rate,
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
     )
 
 

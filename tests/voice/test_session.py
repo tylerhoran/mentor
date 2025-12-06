@@ -2,12 +2,8 @@
 
 from datetime import datetime, timedelta
 
-import numpy as np
-import pytest
-
 from mentor.voice.session import (
     VoiceInteraction,
-    VoiceSession,
     VoiceSessionManager,
     VoiceSessionState,
     get_session_manager,
@@ -260,7 +256,7 @@ class TestVoiceSessionManager:
         manager = VoiceSessionManager()
 
         # Create sessions
-        active = manager.create_session("student-1", "course", "active")
+        manager.create_session("student-1", "course", "active")
         stale = manager.create_session("student-2", "course", "stale")
 
         # Make one stale
@@ -280,7 +276,6 @@ class TestGetSessionManager:
         """Test session manager singleton."""
         import mentor.voice.session as session_module
 
-        import mentor.voice.session as session_module
         session_module._session_manager = None
 
         manager1 = get_session_manager()

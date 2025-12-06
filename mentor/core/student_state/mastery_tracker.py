@@ -8,7 +8,7 @@ Uses Bayesian Knowledge Tracing variant:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from mentor.core.course_definition.knowledge_graph import KnowledgeGraph
@@ -21,7 +21,7 @@ class MasteryEstimate:
     estimate: float = 0.0  # 0.0 to 1.0
     confidence: float = 0.0  # 0.0 to 1.0
     interaction_count: int = 0
-    last_updated: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_updated: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage."""
@@ -39,7 +39,7 @@ class MasteryEstimate:
         if isinstance(last_updated, str):
             last_updated = datetime.fromisoformat(last_updated.replace("Z", "+00:00"))
         elif last_updated is None:
-            last_updated = datetime.now(timezone.utc)
+            last_updated = datetime.now(UTC)
 
         return cls(
             estimate=data.get("estimate", 0.0),
@@ -179,7 +179,7 @@ class MasteryTracker:
             estimate=new_mastery,
             confidence=new_confidence,
             interaction_count=new_interaction_count,
-            last_updated=datetime.now(timezone.utc),
+            last_updated=datetime.now(UTC),
         )
 
         self._mastery[concept_id] = updated
@@ -248,7 +248,7 @@ class MasteryTracker:
 
     def get_ready_for_review(self, days_threshold: int = 7) -> list[str]:
         """Get concepts that haven't been practiced recently."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ready = []
 
         for concept_id, mastery in self._mastery.items():

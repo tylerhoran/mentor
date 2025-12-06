@@ -1,6 +1,5 @@
 """Tests for the gaming detector module."""
 
-from datetime import datetime, timezone
 
 import pytest
 

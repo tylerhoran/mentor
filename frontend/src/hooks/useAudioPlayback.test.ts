@@ -310,7 +310,7 @@ describe("useAudioPlayback", () => {
 
   describe("cleanup", () => {
     it("should handle unmount gracefully", () => {
-      const { result, unmount } = renderHook(() => useAudioPlayback());
+      const { unmount } = renderHook(() => useAudioPlayback());
 
       // Just verify we can unmount without errors
       expect(() => {

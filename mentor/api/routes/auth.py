@@ -1,6 +1,6 @@
 """Authentication routes."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import bcrypt
 from fastapi import APIRouter, HTTPException, status
@@ -67,7 +67,7 @@ def get_password_hash(password: str) -> str:
 def create_access_token(user_id: str) -> tuple[str, int]:
     """Create an access token for a user."""
     expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
-    expire = datetime.now(timezone.utc) + expires_delta
+    expire = datetime.now(UTC) + expires_delta
 
     to_encode = {
         "sub": user_id,
@@ -82,7 +82,7 @@ def create_access_token(user_id: str) -> tuple[str, int]:
 def create_refresh_token(user_id: str) -> str:
     """Create a refresh token for a user."""
     expires_delta = timedelta(days=settings.refresh_token_expire_days)
-    expire = datetime.now(timezone.utc) + expires_delta
+    expire = datetime.now(UTC) + expires_delta
 
     to_encode = {
         "sub": user_id,
@@ -170,11 +170,11 @@ async def refresh_token(refresh_token: str, db: DbSession) -> TokenResponse:
                 detail="Invalid token",
             )
 
-    except jwt.JWTError:
+    except jwt.JWTError as err:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
-        )
+        ) from err
 
     # Verify user still exists
     result = await db.execute(select(User).where(User.id == user_id))

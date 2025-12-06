@@ -1,16 +1,12 @@
 """Pytest fixtures for voice layer tests."""
 
-import asyncio
-from datetime import datetime
-from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, Mock
+from unittest.mock import AsyncMock, Mock
 
 import numpy as np
 import pytest
 
 from mentor.voice.config import STTModel, TTSEngine, VoiceConfig
-from mentor.voice.session import VoiceInteraction, VoiceSession, VoiceSessionState
-from mentor.voice.stt.vad import SpeechState, VADResult
+from mentor.voice.session import VoiceInteraction, VoiceSession
 
 
 @pytest.fixture

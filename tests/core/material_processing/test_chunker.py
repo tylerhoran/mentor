@@ -1,6 +1,5 @@
 """Tests for the semantic chunker module."""
 
-import pytest
 
 from mentor.core.material_processing.chunker import Chunk, SemanticChunker
 

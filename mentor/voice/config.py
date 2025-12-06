@@ -3,7 +3,6 @@
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -40,9 +39,9 @@ class VoiceConfig(BaseModel):
     # TTS Configuration
     tts_engine: TTSEngine = TTSEngine.HYBRID
     piper_model: str = "en_US-lessac-medium"
-    piper_model_path: Optional[Path] = None
+    piper_model_path: Path | None = None
     xtts_model: str = "tts_models/multilingual/multi-dataset/xtts_v2"
-    voice_sample_path: Optional[Path] = None  # For voice cloning
+    voice_sample_path: Path | None = None  # For voice cloning
 
     # Hybrid TTS thresholds
     short_response_chars: int = 100  # Use Piper below this
@@ -60,7 +59,7 @@ class VoiceConfig(BaseModel):
 
 
 # Global config instance
-_voice_config: Optional[VoiceConfig] = None
+_voice_config: VoiceConfig | None = None
 
 
 def get_voice_config() -> VoiceConfig:

@@ -1,8 +1,6 @@
 """Tests for the engagement metrics module."""
 
-from datetime import datetime, timedelta, timezone
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from mentor.core.student_state.engagement_metrics import (
     EngagementMetrics,
@@ -16,7 +14,7 @@ class TestSessionMetrics:
 
     def test_creation(self):
         """Test creating session metrics."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         metrics = SessionMetrics(
             session_id="session-1",
             start_time=now,
@@ -28,7 +26,7 @@ class TestSessionMetrics:
 
     def test_duration_seconds(self):
         """Test calculating duration."""
-        start = datetime.now(timezone.utc)
+        start = datetime.now(UTC)
         end = start + timedelta(minutes=5)
 
         metrics = SessionMetrics(
@@ -42,7 +40,7 @@ class TestSessionMetrics:
         """Test duration with no end time."""
         metrics = SessionMetrics(
             session_id="session-1",
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
         )
         assert metrics.duration_seconds == 0
 
@@ -50,7 +48,7 @@ class TestSessionMetrics:
         """Test calculating average response time."""
         metrics = SessionMetrics(
             session_id="session-1",
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
             interaction_count=4,
             total_response_time_ms=2000,
         )
@@ -60,7 +58,7 @@ class TestSessionMetrics:
         """Test average response time with no interactions."""
         metrics = SessionMetrics(
             session_id="session-1",
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
             interaction_count=0,
         )
         assert metrics.average_response_time_ms is None
@@ -104,7 +102,7 @@ class TestEngagementMetrics:
 
     def test_to_dict(self):
         """Test serialization to dict."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         metrics = EngagementMetrics(
             total_interactions=50,
             total_time_seconds=1800,

@@ -1,6 +1,6 @@
 """Tests for the mastery tracker module."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -31,7 +31,7 @@ class TestMasteryEstimate:
 
     def test_to_dict(self):
         """Test serialization to dict."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         estimate = MasteryEstimate(
             estimate=0.5,
             confidence=0.6,
@@ -229,7 +229,7 @@ class TestMasteryTracker:
     def test_get_ready_for_review(self):
         """Test getting concepts ready for review."""
         tracker = MasteryTracker()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         old_date = now - timedelta(days=10)
 
         tracker._mastery["c1"] = MasteryEstimate(

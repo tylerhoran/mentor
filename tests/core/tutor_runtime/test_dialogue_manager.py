@@ -1,6 +1,6 @@
 """Tests for DialogueManager."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, Mock
 
 import pytest
@@ -351,7 +351,7 @@ class TestDialogueManager:
             move=PedagogicalMove.HINT,
             message_type=StudentMessageType.CONFUSION,
             gaming_flags=[],
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
 
         assert dialogue_manager.hint_count == initial_count + 1
@@ -361,7 +361,7 @@ class TestDialogueManager:
         """Test that last interaction time is updated."""
         assert dialogue_manager.last_interaction_time is None
 
-        timestamp = datetime.now(timezone.utc)
+        timestamp = datetime.now(UTC)
         await dialogue_manager._post_response_processing(
             interaction_id="test-id",
             student_message="Hello",

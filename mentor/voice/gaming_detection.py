@@ -3,7 +3,6 @@
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
 
 import numpy as np
 
@@ -46,7 +45,7 @@ class GamingFlag:
 class VoiceGamingAnalysis:
     """Analysis of potential gaming in voice interaction."""
 
-    flags: List[GamingFlag] = field(default_factory=list)
+    flags: list[GamingFlag] = field(default_factory=list)
     confidence: float = 0.0  # 0-1, higher = more confident gaming is occurring
     details: dict = field(default_factory=dict)
 
@@ -55,7 +54,7 @@ class VoiceGamingAnalysis:
         return len(self.flags) > 0
 
     @property
-    def high_severity_flags(self) -> List[GamingFlag]:
+    def high_severity_flags(self) -> list[GamingFlag]:
         return [f for f in self.flags if f.severity >= 0.7]
 
 
@@ -70,7 +69,7 @@ class VoiceGamingDetector:
     MIN_NATURAL_CV = 0.15  # Minimum coefficient of variation for natural timing
 
     def __init__(self):
-        self.history: List[VoiceInteraction] = []
+        self.history: list[VoiceInteraction] = []
 
     def analyze_interaction(
         self,
@@ -114,7 +113,7 @@ class VoiceGamingDetector:
 
     def _analyze_latency(
         self, interaction: VoiceInteraction, session: VoiceSession, expected_difficulty: float
-    ) -> List[GamingFlag]:
+    ) -> list[GamingFlag]:
         """Analyze response latency for gaming signals."""
         flags = []
         latency = interaction.response_latency_ms
@@ -173,7 +172,7 @@ class VoiceGamingDetector:
 
         return flags
 
-    def _analyze_speech_patterns(self, interaction: VoiceInteraction) -> List[GamingFlag]:
+    def _analyze_speech_patterns(self, interaction: VoiceInteraction) -> list[GamingFlag]:
         """Analyze speech patterns for gaming signals."""
         flags = []
 
@@ -226,7 +225,7 @@ class VoiceGamingDetector:
 
         return flags
 
-    def _analyze_timing_consistency(self, session: VoiceSession) -> List[GamingFlag]:
+    def _analyze_timing_consistency(self, session: VoiceSession) -> list[GamingFlag]:
         """Check if response timings are unnaturally consistent."""
         flags = []
 
@@ -262,7 +261,7 @@ class VoiceGamingDetector:
 
     def _analyze_response_complexity(
         self, interaction: VoiceInteraction, expected_difficulty: float
-    ) -> List[GamingFlag]:
+    ) -> list[GamingFlag]:
         """Analyze if response complexity matches expected student level."""
         flags = []
 
@@ -293,15 +292,15 @@ class VoiceGamingDetector:
                         "expected_difficulty": expected_difficulty,
                     },
                     explanation=(
-                        f"Response vocabulary complexity seems high for the "
-                        f"difficulty level of the question"
+                        "Response vocabulary complexity seems high for the "
+                        "difficulty level of the question"
                     ),
                 )
             )
 
         return flags
 
-    def _calculate_gaming_confidence(self, flags: List[GamingFlag]) -> float:
+    def _calculate_gaming_confidence(self, flags: list[GamingFlag]) -> float:
         """Calculate overall confidence that gaming is occurring."""
         if not flags:
             return 0.0

@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from typing import Annotated
 from uuid import uuid4
 
 import aiofiles
@@ -67,7 +68,7 @@ async def upload_material(
     course_id: str,
     title: str,
     material_type: str,
-    file: UploadFile = File(...),
+    file: Annotated[UploadFile, File(...)],
     concept_ids: str = "",  # Comma-separated
     db: DbSession = None,
     current_user: CurrentFaculty = None,

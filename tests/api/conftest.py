@@ -1,11 +1,9 @@
 """Fixtures for API tests."""
 
 import uuid
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock, Mock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
-from fastapi.testclient import TestClient
 
 
 @pytest.fixture

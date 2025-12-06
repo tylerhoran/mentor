@@ -1,6 +1,6 @@
 """Tests for tutor session schemas."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -40,7 +40,7 @@ class TestSessionResponse:
 
     def test_session_response(self):
         """Test session response schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = SessionResponse(
             session_id="session-123",
             course_id="course-456",
@@ -56,7 +56,7 @@ class TestSessionResponse:
 
     def test_session_response_default_message_count(self):
         """Test default message count is 0."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = SessionResponse(
             session_id="session-123",
             course_id="course-456",
@@ -114,7 +114,7 @@ class TestMessageResponse:
 
     def test_message_response(self):
         """Test message response schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = MessageResponse(
             interaction_id="interaction-123",
             session_id="session-456",
@@ -130,7 +130,7 @@ class TestMessageResponse:
 
     def test_message_response_optional_fields(self):
         """Test message response with optional fields as None."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = MessageResponse(
             interaction_id="interaction-123",
             session_id="session-456",
@@ -150,7 +150,7 @@ class TestInteractionResponse:
 
     def test_interaction_response(self):
         """Test interaction response schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = InteractionResponse(
             id="interaction-123",
             session_id="session-456",
@@ -173,7 +173,7 @@ class TestInteractionResponse:
 
     def test_interaction_response_minimal(self):
         """Test interaction response with minimal fields."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = InteractionResponse(
             id="interaction-123",
             session_id="session-456",
@@ -197,7 +197,7 @@ class TestSessionHistoryResponse:
 
     def test_session_history_response(self):
         """Test session history response schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         interactions = [
             InteractionResponse(
                 id="i1",
@@ -243,7 +243,7 @@ class TestSessionHistoryResponse:
 
     def test_session_history_ended_at_optional(self):
         """Test ended_at is optional (for active sessions)."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         history = SessionHistoryResponse(
             session_id="session-123",
             course_id="course-456",

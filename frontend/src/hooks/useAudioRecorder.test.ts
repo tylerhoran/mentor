@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act, waitFor } from '@testing-library/react';
-import { useAudioRecorder } from './useAudioRecorder';
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import { useAudioRecorder } from "./useAudioRecorder";
 
-describe('useAudioRecorder', () => {
+describe("useAudioRecorder", () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
   });
@@ -12,8 +12,8 @@ describe('useAudioRecorder', () => {
     vi.clearAllMocks();
   });
 
-  describe('initial state', () => {
-    it('should start with default state', () => {
+  describe("initial state", () => {
+    it("should start with default state", () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       expect(result.current.isRecording).toBe(false);
@@ -22,19 +22,19 @@ describe('useAudioRecorder', () => {
       expect(result.current.duration).toBe(0);
     });
 
-    it('should expose control functions', () => {
+    it("should expose control functions", () => {
       const { result } = renderHook(() => useAudioRecorder());
 
-      expect(typeof result.current.startRecording).toBe('function');
-      expect(typeof result.current.stopRecording).toBe('function');
-      expect(typeof result.current.pauseRecording).toBe('function');
-      expect(typeof result.current.resumeRecording).toBe('function');
-      expect(typeof result.current.toggleRecording).toBe('function');
+      expect(typeof result.current.startRecording).toBe("function");
+      expect(typeof result.current.stopRecording).toBe("function");
+      expect(typeof result.current.pauseRecording).toBe("function");
+      expect(typeof result.current.resumeRecording).toBe("function");
+      expect(typeof result.current.toggleRecording).toBe("function");
     });
   });
 
-  describe('startRecording', () => {
-    it('should request microphone access', async () => {
+  describe("startRecording", () => {
+    it("should request microphone access", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       await act(async () => {
@@ -52,7 +52,7 @@ describe('useAudioRecorder', () => {
       });
     });
 
-    it('should set isRecording to true on success', async () => {
+    it("should set isRecording to true on success", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       await act(async () => {
@@ -63,9 +63,9 @@ describe('useAudioRecorder', () => {
       expect(result.current.error).toBeNull();
     });
 
-    it('should use custom sample rate when provided', async () => {
+    it("should use custom sample rate when provided", async () => {
       const { result } = renderHook(() =>
-        useAudioRecorder({ sampleRate: 44100 })
+        useAudioRecorder({ sampleRate: 44100 }),
       );
 
       await act(async () => {
@@ -79,10 +79,10 @@ describe('useAudioRecorder', () => {
       });
     });
 
-    it('should handle getUserMedia error', async () => {
-      const mockError = new Error('Permission denied');
+    it("should handle getUserMedia error", async () => {
+      const mockError = new Error("Permission denied");
       vi.mocked(navigator.mediaDevices.getUserMedia).mockRejectedValueOnce(
-        mockError
+        mockError,
       );
 
       const onError = vi.fn();
@@ -93,11 +93,11 @@ describe('useAudioRecorder', () => {
       });
 
       expect(result.current.isRecording).toBe(false);
-      expect(result.current.error).toBe('Permission denied');
-      expect(onError).toHaveBeenCalledWith('Permission denied');
+      expect(result.current.error).toBe("Permission denied");
+      expect(onError).toHaveBeenCalledWith("Permission denied");
     });
 
-    it('should track duration while recording', async () => {
+    it("should track duration while recording", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       await act(async () => {
@@ -115,8 +115,8 @@ describe('useAudioRecorder', () => {
     });
   });
 
-  describe('stopRecording', () => {
-    it('should set isRecording to false', async () => {
+  describe("stopRecording", () => {
+    it("should set isRecording to false", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       await act(async () => {
@@ -132,7 +132,7 @@ describe('useAudioRecorder', () => {
       expect(result.current.isRecording).toBe(false);
     });
 
-    it('should stop duration tracking', async () => {
+    it("should stop duration tracking", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       await act(async () => {
@@ -158,8 +158,8 @@ describe('useAudioRecorder', () => {
     });
   });
 
-  describe('pauseRecording and resumeRecording', () => {
-    it('should toggle isPaused state', async () => {
+  describe("pauseRecording and resumeRecording", () => {
+    it("should toggle isPaused state", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       await act(async () => {
@@ -182,8 +182,8 @@ describe('useAudioRecorder', () => {
     });
   });
 
-  describe('toggleRecording', () => {
-    it('should start recording when not recording', async () => {
+  describe("toggleRecording", () => {
+    it("should start recording when not recording", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       expect(result.current.isRecording).toBe(false);
@@ -195,7 +195,7 @@ describe('useAudioRecorder', () => {
       expect(result.current.isRecording).toBe(true);
     });
 
-    it('should stop recording when recording', async () => {
+    it("should stop recording when recording", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       await act(async () => {
@@ -212,12 +212,10 @@ describe('useAudioRecorder', () => {
     });
   });
 
-  describe('onAudioChunk callback', () => {
-    it('should be called when audio data is available', async () => {
+  describe("onAudioChunk callback", () => {
+    it("should be called when audio data is available", async () => {
       const onAudioChunk = vi.fn();
-      const { result } = renderHook(() =>
-        useAudioRecorder({ onAudioChunk })
-      );
+      const { result } = renderHook(() => useAudioRecorder({ onAudioChunk }));
 
       await act(async () => {
         await result.current.startRecording();
@@ -229,8 +227,8 @@ describe('useAudioRecorder', () => {
     });
   });
 
-  describe('cleanup', () => {
-    it('should cleanup on unmount', async () => {
+  describe("cleanup", () => {
+    it("should cleanup on unmount", async () => {
       const { result, unmount } = renderHook(() => useAudioRecorder());
 
       await act(async () => {
@@ -244,7 +242,7 @@ describe('useAudioRecorder', () => {
       // Resources should be cleaned up (no errors thrown)
     });
 
-    it('should cleanup when starting new recording', async () => {
+    it("should cleanup when starting new recording", async () => {
       const { result } = renderHook(() => useAudioRecorder());
 
       await act(async () => {

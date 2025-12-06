@@ -1,7 +1,7 @@
 """Tests for Text-to-Speech services."""
 
 import sys
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 import numpy as np

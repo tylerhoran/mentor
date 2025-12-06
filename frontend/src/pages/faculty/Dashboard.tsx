@@ -1,19 +1,25 @@
-import { useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
-import { Plus, BookOpen, Users, BarChart3, LogOut } from 'lucide-react'
-import { apiClient } from '@/api/client'
-import { useAuthStore } from '@/stores/auth'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import type { Course } from '@/types'
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { Plus, BookOpen, BarChart3, LogOut } from "lucide-react";
+import { apiClient } from "@/api/client";
+import { useAuthStore } from "@/stores/auth";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Course } from "@/types";
 
 export default function FacultyDashboard() {
-  const { user, logout } = useAuthStore()
+  const { user, logout } = useAuthStore();
 
   const { data: courses, isLoading } = useQuery({
-    queryKey: ['courses'],
-    queryFn: () => apiClient.get<Course[]>('/courses'),
-  })
+    queryKey: ["courses"],
+    queryFn: () => apiClient.get<Course[]>("/courses"),
+  });
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -34,7 +40,9 @@ export default function FacultyDashboard() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-2xl font-bold">Your Courses</h2>
-            <p className="text-muted-foreground">Manage your courses and track student progress</p>
+            <p className="text-muted-foreground">
+              Manage your courses and track student progress
+            </p>
           </div>
           <Button asChild>
             <Link to="/faculty/course/new">
@@ -63,7 +71,9 @@ export default function FacultyDashboard() {
             <CardContent className="flex flex-col items-center justify-center py-12">
               <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">No courses yet</h3>
-              <p className="text-muted-foreground mb-4">Create your first course to get started</p>
+              <p className="text-muted-foreground mb-4">
+                Create your first course to get started
+              </p>
               <Button asChild>
                 <Link to="/faculty/course/new">
                   <Plus className="h-4 w-4 mr-2" />
@@ -75,19 +85,28 @@ export default function FacultyDashboard() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses?.map((course) => (
-              <Card key={course.id} className="hover:shadow-md transition-shadow">
+              <Card
+                key={course.id}
+                className="hover:shadow-md transition-shadow"
+              >
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg">{course.name}</CardTitle>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      course.status === 'active' ? 'bg-green-100 text-green-700' :
-                      course.status === 'draft' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        course.status === "active"
+                          ? "bg-green-100 text-green-700"
+                          : course.status === "draft"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
                       {course.status}
                     </span>
                   </div>
-                  <CardDescription>{course.description || 'No description'}</CardDescription>
+                  <CardDescription>
+                    {course.description || "No description"}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-2">
@@ -111,5 +130,5 @@ export default function FacultyDashboard() {
         )}
       </main>
     </div>
-  )
+  );
 }

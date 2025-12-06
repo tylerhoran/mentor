@@ -1,13 +1,12 @@
 """Tests for course schemas."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
 
 from mentor.schemas.course import (
     ConceptCreate,
-    ConceptResponse,
     ConceptUpdate,
     CourseCreate,
     CourseResponse,
@@ -164,7 +163,7 @@ class TestCourseResponse:
 
     def test_course_response(self):
         """Test course response schema."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = CourseResponse(
             id="course-123",
             name="Python 101",
@@ -319,7 +318,7 @@ class TestMisconceptionResponse:
 
     def test_misconception_response(self):
         """Test misconception response includes counters."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = MisconceptionResponse(
             id="misc-123",
             concept_id="concept-456",

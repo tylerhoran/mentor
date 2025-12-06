@@ -8,10 +8,8 @@ Coordinates:
 - Progress tracking
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
-
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from mentor.core.course_definition.knowledge_graph import KnowledgeGraph
 from mentor.core.student_state.engagement_metrics import EngagementTracker
@@ -138,9 +136,11 @@ class StudentStateManager:
             )
 
             # Check if concept is now mastered
-            if self.mastery_tracker.is_mastered(concept_id):
-                if concept_id not in self.concepts_completed:
-                    self.concepts_completed.append(concept_id)
+            if (
+                self.mastery_tracker.is_mastered(concept_id)
+                and concept_id not in self.concepts_completed
+            ):
+                self.concepts_completed.append(concept_id)
 
         # Record gaming signals
         if gaming_signals:
@@ -203,7 +203,7 @@ class StudentStateManager:
             {
                 "type": flag_type,
                 "severity": severity,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "evidence": evidence,
                 "interaction_id": interaction_id,
                 "resolved": False,
@@ -215,7 +215,7 @@ class StudentStateManager:
         if 0 <= index < len(self.gaming_flags):
             self.gaming_flags[index]["resolved"] = True
             self.gaming_flags[index]["resolution_note"] = resolution_note
-            self.gaming_flags[index]["resolved_at"] = datetime.now(timezone.utc).isoformat()
+            self.gaming_flags[index]["resolved_at"] = datetime.now(UTC).isoformat()
             return True
         return False
 
@@ -279,8 +279,7 @@ class StudentStateManager:
             recommendations["weakest_concepts"] = self.mastery_tracker.get_weakest_concepts(3)
 
         # Check if ready to advance
-        if self.current_concept_id:
-            if self.mastery_tracker.is_mastered(self.current_concept_id):
-                recommendations["ready_to_advance"] = True
+        if self.current_concept_id and self.mastery_tracker.is_mastered(self.current_concept_id):
+            recommendations["ready_to_advance"] = True
 
         return recommendations

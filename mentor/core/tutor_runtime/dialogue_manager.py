@@ -9,9 +9,10 @@ Manages:
 - Gaming signal detection
 """
 
-from datetime import datetime, timezone
+from collections.abc import AsyncGenerator
+from datetime import UTC, datetime
 from enum import Enum
-from typing import TYPE_CHECKING, Any, AsyncGenerator
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 import structlog
@@ -135,7 +136,7 @@ class DialogueManager:
             Tutor response (string or async generator if streaming)
         """
         interaction_id = str(uuid4())
-        timestamp = datetime.now(timezone.utc)
+        timestamp = datetime.now(UTC)
 
         logger.info(
             "processing_student_message",

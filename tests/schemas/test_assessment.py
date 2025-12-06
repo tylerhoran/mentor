@@ -1,6 +1,6 @@
 """Tests for assessment schemas."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -9,7 +9,6 @@ from mentor.schemas.assessment import (
     GamingFlag,
     InteractionExcerpt,
     MasteryEstimate,
-    MasteryReport,
     TrajectoryAnalysis,
     VerificationQuestion,
     VerificationReportCreate,
@@ -23,7 +22,7 @@ class TestMasteryEstimate:
 
     def test_mastery_estimate_creation(self):
         """Test creating a mastery estimate."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         estimate = MasteryEstimate(
             concept_id="concept-123",
             concept_name="Variables",
@@ -39,7 +38,7 @@ class TestMasteryEstimate:
 
     def test_estimate_bounds(self):
         """Test estimate must be between 0 and 1."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         # Valid bounds
         MasteryEstimate(
@@ -82,7 +81,7 @@ class TestMasteryEstimate:
 
     def test_confidence_bounds(self):
         """Test confidence must be between 0 and 1."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         with pytest.raises(ValidationError):
             MasteryEstimate(
@@ -110,7 +109,7 @@ class TestGamingFlag:
 
     def test_gaming_flag_creation(self):
         """Test creating a gaming flag."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         flag = GamingFlag(
             type="fast_response",
             severity="medium",
@@ -124,7 +123,7 @@ class TestGamingFlag:
 
     def test_severity_validation(self):
         """Test severity pattern validation."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         # Valid severities
         for severity in ["low", "medium", "high"]:
@@ -147,7 +146,7 @@ class TestGamingFlag:
 
     def test_gaming_flag_resolved(self):
         """Test resolved flag."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         flag = GamingFlag(
             type="test",
             severity="low",
@@ -159,7 +158,7 @@ class TestGamingFlag:
 
     def test_gaming_flag_interaction_id(self):
         """Test optional interaction ID."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         flag = GamingFlag(
             type="test",
             severity="low",
@@ -175,7 +174,7 @@ class TestTrajectoryAnalysis:
 
     def test_trajectory_analysis_creation(self):
         """Test creating trajectory analysis."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         analysis = TrajectoryAnalysis(
             student_id="student-123",
             course_id="course-456",
@@ -191,7 +190,7 @@ class TestTrajectoryAnalysis:
 
     def test_classification_validation(self):
         """Test classification pattern validation."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         # Valid classifications
         for classification in ["genuine", "suspected_gaming", "unclear"]:
@@ -220,7 +219,7 @@ class TestTrajectoryAnalysis:
 
     def test_confidence_bounds(self):
         """Test confidence must be between 0 and 1."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         with pytest.raises(ValidationError):
             TrajectoryAnalysis(
@@ -279,7 +278,7 @@ class TestInteractionExcerpt:
 
     def test_interaction_excerpt_creation(self):
         """Test creating an interaction excerpt."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         excerpt = InteractionExcerpt(
             type="breakthrough",
             concept_id="concept-123",
@@ -295,7 +294,7 @@ class TestInteractionExcerpt:
 
     def test_type_validation(self):
         """Test type pattern validation."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         for excerpt_type in ["breakthrough", "struggle", "gaming_flag"]:
             excerpt = InteractionExcerpt(
@@ -384,7 +383,7 @@ class TestVerificationReportResponse:
 
     def test_verification_report_response(self):
         """Test verification report response."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         response = VerificationReportResponse(
             id="report-123",
             student_id="student-456",

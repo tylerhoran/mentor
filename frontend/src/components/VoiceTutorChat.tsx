@@ -1,13 +1,13 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useAudioRecorder } from '../hooks/useAudioRecorder';
-import { useVoiceWebSocket } from '../hooks/useVoiceWebSocket';
-import { useAudioPlayback } from '../hooks/useAudioPlayback';
-import { VoiceControls } from './VoiceControls';
-import { VoiceIndicator, StatusBadge } from './VoiceIndicator';
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { useAudioRecorder } from "../hooks/useAudioRecorder";
+import { useVoiceWebSocket } from "../hooks/useVoiceWebSocket";
+import { useAudioPlayback } from "../hooks/useAudioPlayback";
+import { VoiceControls } from "./VoiceControls";
+import { VoiceIndicator, StatusBadge } from "./VoiceIndicator";
 
 interface Message {
   id: string;
-  role: 'student' | 'tutor';
+  role: "student" | "tutor";
   text: string;
   timestamp: Date;
   gamingConfidence?: number;
@@ -28,7 +28,7 @@ export function VoiceTutorChat({
 }: VoiceTutorChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isMuted, setIsMuted] = useState(false);
-  const [currentTranscription, setCurrentTranscription] = useState('');
+  const [currentTranscription, setCurrentTranscription] = useState("");
   const [speechProbability, setSpeechProbability] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -40,7 +40,6 @@ export function VoiceTutorChat({
 
   // WebSocket connection
   const {
-    connectionState,
     currentStatus,
     sessionId,
     connect,
@@ -48,7 +47,6 @@ export function VoiceTutorChat({
     sendAudio,
     reset,
     isConnected,
-    isListening,
     isProcessing,
     isSpeaking,
   } = useVoiceWebSocket({
@@ -62,13 +60,16 @@ export function VoiceTutorChat({
     },
     onResponse: (text, gamingConfidence) => {
       // Add tutor message
-      setMessages(prev => [...prev, {
-        id: crypto.randomUUID(),
-        role: 'tutor',
-        text,
-        timestamp: new Date(),
-        gamingConfidence,
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          role: "tutor",
+          text,
+          timestamp: new Date(),
+          gamingConfidence,
+        },
+      ]);
     },
     onAudioResponse: async (audio) => {
       if (!isMuted) {
@@ -76,12 +77,12 @@ export function VoiceTutorChat({
       }
     },
     onStatusChange: (status, data) => {
-      if (status === 'listening' && data?.speech_probability !== undefined) {
+      if (status === "listening" && data?.speech_probability !== undefined) {
         setSpeechProbability(data.speech_probability as number);
       }
     },
     onError: (error) => {
-      console.error('Voice error:', error);
+      console.error("Voice error:", error);
     },
   });
 
@@ -97,7 +98,7 @@ export function VoiceTutorChat({
       sendAudio(chunk);
     },
     onError: (error) => {
-      console.error('Recorder error:', error);
+      console.error("Recorder error:", error);
     },
   });
 
@@ -112,20 +113,23 @@ export function VoiceTutorChat({
 
   // Add student message when transcription is complete
   useEffect(() => {
-    if (currentStatus === 'processing' && currentTranscription) {
-      setMessages(prev => [...prev, {
-        id: crypto.randomUUID(),
-        role: 'student',
-        text: currentTranscription,
-        timestamp: new Date(),
-      }]);
-      setCurrentTranscription('');
+    if (currentStatus === "processing" && currentTranscription) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          role: "student",
+          text: currentTranscription,
+          timestamp: new Date(),
+        },
+      ]);
+      setCurrentTranscription("");
     }
   }, [currentStatus, currentTranscription]);
 
   // Scroll to bottom on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, currentTranscription]);
 
   const toggleRecording = useCallback(() => {
@@ -148,7 +152,7 @@ export function VoiceTutorChat({
   const handleReset = useCallback(() => {
     reset();
     setMessages([]);
-    setCurrentTranscription('');
+    setCurrentTranscription("");
   }, [reset]);
 
   return (
@@ -158,21 +162,29 @@ export function VoiceTutorChat({
         <div className="flex items-center gap-3">
           <div
             className={`w-2.5 h-2.5 rounded-full ${
-              isConnected ? 'bg-green-500' : 'bg-red-500'
+              isConnected ? "bg-green-500" : "bg-red-500"
             }`}
           />
           <div>
             <h1 className="font-semibold text-gray-900">Voice Tutor</h1>
             <p className="text-xs text-gray-500">
-              {sessionId ? `Session: ${sessionId.slice(0, 8)}...` : 'Connecting...'}
+              {sessionId
+                ? `Session: ${sessionId.slice(0, 8)}...`
+                : "Connecting..."}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <StatusBadge state={currentStatus as 'idle' | 'listening' | 'processing' | 'speaking'} />
+          <StatusBadge
+            state={
+              currentStatus as "idle" | "listening" | "processing" | "speaking"
+            }
+          />
           <VoiceIndicator
-            state={currentStatus as 'idle' | 'listening' | 'processing' | 'speaking'}
+            state={
+              currentStatus as "idle" | "listening" | "processing" | "speaking"
+            }
             speechProbability={speechProbability}
           />
         </div>
@@ -181,9 +193,7 @@ export function VoiceTutorChat({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4">
         <div className="max-w-3xl mx-auto space-y-4">
-          {messages.length === 0 && !isRecording && (
-            <WelcomeMessage />
-          )}
+          {messages.length === 0 && !isRecording && <WelcomeMessage />}
 
           {messages.map((message) => (
             <MessageBubble key={message.id} message={message} />
@@ -204,9 +214,18 @@ export function VoiceTutorChat({
             <div className="flex justify-start">
               <div className="rounded-lg p-4 bg-white border shadow-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <div
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <div
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "300ms" }}
+                  />
                 </div>
               </div>
             </div>
@@ -230,7 +249,9 @@ export function VoiceTutorChat({
         />
 
         {recorderError && (
-          <p className="text-center text-sm text-red-500 mt-2">{recorderError}</p>
+          <p className="text-center text-sm text-red-500 mt-2">
+            {recorderError}
+          </p>
         )}
       </div>
     </div>
@@ -245,14 +266,14 @@ function WelcomeMessage() {
         Welcome to Voice Tutoring!
       </h2>
       <p className="text-gray-500 max-w-md mx-auto mb-6">
-        Speak naturally to ask questions or discuss concepts.
-        I'll guide you through the material using Socratic dialogue.
+        Speak naturally to ask questions or discuss concepts. I'll guide you
+        through the material using Socratic dialogue.
       </p>
       <div className="flex flex-wrap justify-center gap-2">
         {[
-          'Can you explain the main concept?',
-          'I\'m confused about...',
-          'Give me an example',
+          "Can you explain the main concept?",
+          "I'm confused about...",
+          "Give me an example",
         ].map((prompt) => (
           <span
             key={prompt}
@@ -271,32 +292,35 @@ interface MessageBubbleProps {
 }
 
 function MessageBubble({ message }: MessageBubbleProps) {
-  const isStudent = message.role === 'student';
+  const isStudent = message.role === "student";
 
   return (
-    <div className={`flex ${isStudent ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex ${isStudent ? "justify-end" : "justify-start"}`}>
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
           isStudent
-            ? 'bg-blue-500 text-white'
-            : 'bg-white border shadow-sm text-gray-900'
+            ? "bg-blue-500 text-white"
+            : "bg-white border shadow-sm text-gray-900"
         }`}
       >
         <p className="text-sm whitespace-pre-wrap">{message.text}</p>
-        <div className={`flex items-center justify-between mt-1 ${
-          isStudent ? 'text-blue-100' : 'text-gray-400'
-        }`}>
+        <div
+          className={`flex items-center justify-between mt-1 ${
+            isStudent ? "text-blue-100" : "text-gray-400"
+          }`}
+        >
           <span className="text-xs">
             {message.timestamp.toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
+              hour: "2-digit",
+              minute: "2-digit",
             })}
           </span>
-          {message.gamingConfidence !== undefined && message.gamingConfidence > 0.5 && (
-            <span className="text-xs text-yellow-500" title="Gaming detected">
-              ⚠️
-            </span>
-          )}
+          {message.gamingConfidence !== undefined &&
+            message.gamingConfidence > 0.5 && (
+              <span className="text-xs text-yellow-500" title="Gaming detected">
+                ⚠️
+              </span>
+            )}
         </div>
       </div>
     </div>

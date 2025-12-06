@@ -1,12 +1,12 @@
 """Fast TTS using Piper."""
 
 import asyncio
+import importlib.util
 import logging
 import shutil
-import subprocess
 import tempfile
+from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import AsyncGenerator, Optional
 
 from ..config import VoiceConfig, get_voice_config
 from .base import TTSService
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class PiperTTS(TTSService):
     """Fast TTS using Piper for low-latency responses."""
 
-    def __init__(self, config: Optional[VoiceConfig] = None):
+    def __init__(self, config: VoiceConfig | None = None):
         self.config = config or get_voice_config()
         self._piper_available = self._check_installation()
 
@@ -29,13 +29,9 @@ class PiperTTS(TTSService):
             return True
 
         # Try piper-tts Python package
-        try:
-            import piper
-
+        if importlib.util.find_spec("piper"):
             logger.info("Piper TTS available via Python package")
             return True
-        except ImportError:
-            pass
 
         logger.warning(
             "Piper not found. Install with: pip install piper-tts "

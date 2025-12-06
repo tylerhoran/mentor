@@ -10,7 +10,7 @@ Signals monitored:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 import structlog
@@ -40,7 +40,7 @@ class GamingFlag:
 
     type: str  # 'too_fast', 'coherence_break', 'sudden_competence', 'ai_generated', etc.
     severity: str  # 'low', 'medium', 'high'
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     evidence: str = ""
     interaction_id: str | None = None
     resolved: bool = False
@@ -63,7 +63,7 @@ class GamingFlag:
         if isinstance(timestamp, str):
             timestamp = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
         else:
-            timestamp = datetime.now(timezone.utc)
+            timestamp = datetime.now(UTC)
 
         return cls(
             type=data.get("type", "unknown"),

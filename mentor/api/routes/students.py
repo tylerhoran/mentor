@@ -2,12 +2,12 @@
 
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from mentor.api.deps import CurrentFaculty, CurrentStudent, CurrentUser, DbSession
+from mentor.api.deps import CurrentFaculty, CurrentStudent, DbSession
 from mentor.models import Course, CourseEnrollment, StudentState, User
 
 router = APIRouter(prefix="/students", tags=["students"])

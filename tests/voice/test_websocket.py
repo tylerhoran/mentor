@@ -1,14 +1,12 @@
 """Tests for voice WebSocket handler."""
 
-import asyncio
 import json
-from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import numpy as np
 import pytest
 
-from mentor.voice.session import VoiceInteraction, VoiceSession, VoiceSessionState
+from mentor.voice.session import VoiceSession, VoiceSessionState
 
 
 class TestVoiceWebSocketHandler:
@@ -54,18 +52,20 @@ class TestVoiceWebSocketHandler:
 
         handler = VoiceWebSocketHandler()
 
-        with patch("mentor.voice.websocket.get_whisper_stt") as mock_stt:
-            with patch("mentor.voice.websocket.get_vad") as mock_vad:
-                with patch("mentor.voice.websocket.get_tts_service") as mock_tts:
-                    mock_stt.return_value = Mock()
-                    mock_vad.return_value = Mock()
-                    mock_tts_instance = AsyncMock()
-                    mock_tts_instance.warmup = AsyncMock()
-                    mock_tts.return_value = mock_tts_instance
+        with (
+            patch("mentor.voice.websocket.get_whisper_stt") as mock_stt,
+            patch("mentor.voice.websocket.get_vad") as mock_vad,
+            patch("mentor.voice.websocket.get_tts_service") as mock_tts,
+        ):
+            mock_stt.return_value = Mock()
+            mock_vad.return_value = Mock()
+            mock_tts_instance = AsyncMock()
+            mock_tts_instance.warmup = AsyncMock()
+            mock_tts.return_value = mock_tts_instance
 
-                    await handler.initialize()
+            await handler.initialize()
 
-                    assert handler._initialized is True
+            assert handler._initialized is True
 
     @pytest.mark.asyncio
     async def test_send_status(self, handler, mock_websocket):

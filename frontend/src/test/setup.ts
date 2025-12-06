@@ -52,7 +52,8 @@ class MockAudioContext {
     onended: null,
   }));
 
-  decodeAudioData = vi.fn(async (buffer: ArrayBuffer) => ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  decodeAudioData = vi.fn(async (_buffer: ArrayBuffer) => ({
     duration: 1.0,
     length: 16000,
     sampleRate: 16000,

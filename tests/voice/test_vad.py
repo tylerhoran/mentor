@@ -1,12 +1,10 @@
 """Tests for Voice Activity Detection."""
 
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
-import torch
 
-from mentor.voice.config import VoiceConfig
 from mentor.voice.stt.vad import SileroVAD, SpeechState, VADResult, get_vad
 
 
@@ -62,6 +60,7 @@ class TestSpeechState:
 
 class TestSileroVAD:
     """Tests for SileroVAD class."""
+
     @patch("torch.hub.load")
     def test_initialization(self, mock_hub_load, voice_config):
         """Test VAD initialization."""
@@ -216,9 +215,9 @@ class TestSileroVAD:
     @patch("torch.hub.load")
     def test_fallback_without_model(self, mock_hub_load, voice_config, sample_audio):
         """Test fallback behavior when model fails to load."""
-        mock_hub_load.side_effect = Exception("Load failed")
+        mock_hub_load.side_effect = RuntimeError("Load failed")
 
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError, match="Load failed"):
             SileroVAD(voice_config)
 
 
@@ -233,7 +232,6 @@ class TestGetVAD:
 
         import mentor.voice.stt.vad as vad_module
 
-        import mentor.voice.stt.vad as vad_module
         vad_module._vad_instance = None
 
         vad1 = get_vad()

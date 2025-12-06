@@ -8,14 +8,34 @@ Supports:
 - Plain text
 """
 
+from __future__ import annotations
+
 import re
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
+if TYPE_CHECKING:
+    from .chunker import SemanticChunker
+    from .embedder import Embedder
+
 logger = structlog.get_logger()
+
+
+@dataclass
+class MaterialChunk:
+    """A processed chunk of material ready for storage."""
+
+    course_id: str
+    chunk_text: str
+    chunk_index: int
+    chunk_type: str | None
+    metadata: dict
+    embedding: list[float]
+    concept_id: str | None
 
 
 class DocumentProcessor(ABC):
@@ -256,12 +276,9 @@ class MaterialPipeline:
 
     def __init__(
         self,
-        embedder: "Embedder",
-        chunker: "SemanticChunker",
+        embedder: Embedder,
+        chunker: SemanticChunker,
     ):
-        from mentor.core.material_processing.chunker import SemanticChunker
-        from mentor.core.material_processing.embedder import Embedder
-
         self.embedder = embedder
         self.chunker = chunker
         self.processors: dict[str, DocumentProcessor] = {
@@ -282,7 +299,7 @@ class MaterialPipeline:
         material_type: str,
         concept_ids: list[str],
         course_id: str,
-    ) -> list["MaterialChunk"]:
+    ) -> list[MaterialChunk]:
         """
         Full pipeline: extract -> chunk -> embed -> return chunks.
 
@@ -295,7 +312,6 @@ class MaterialPipeline:
         Returns:
             List of MaterialChunk objects ready for storage
         """
-        from mentor.core.material_processing.chunker import Chunk
 
         processor = self.get_processor(file_path)
         if not processor:
@@ -323,20 +339,8 @@ class MaterialPipeline:
         logger.info("embedding_complete", num_embeddings=len(embeddings))
 
         # Create MaterialChunk objects
-        from dataclasses import dataclass
-
-        @dataclass
-        class MaterialChunk:
-            course_id: str
-            chunk_text: str
-            chunk_index: int
-            chunk_type: str | None
-            metadata: dict
-            embedding: list[float]
-            concept_id: str | None
-
         material_chunks = []
-        for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+        for i, (chunk, embedding) in enumerate(zip(chunks, embeddings, strict=False)):
             material_chunks.append(
                 MaterialChunk(
                     course_id=course_id,

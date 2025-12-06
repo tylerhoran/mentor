@@ -74,11 +74,11 @@ class SentenceTransformerEmbedder(Embedder):
                 self._model = SentenceTransformer(self.model_name)
                 self._dimension = self._model.get_sentence_embedding_dimension()
                 logger.info("embedding_model_loaded", dimension=self._dimension)
-            except ImportError:
+            except ImportError as err:
                 raise ImportError(
                     "sentence-transformers is required for local embeddings. "
                     "Install with: pip install sentence-transformers"
-                )
+                ) from err
         return self._model
 
     async def embed(self, texts: list[str]) -> np.ndarray:
@@ -138,11 +138,11 @@ class OpenAIEmbedder(Embedder):
                 from openai import AsyncOpenAI
 
                 self._client = AsyncOpenAI(api_key=self.api_key)
-            except ImportError:
+            except ImportError as err:
                 raise ImportError(
                     "openai package is required for OpenAI embeddings. "
                     "Install with: pip install openai"
-                )
+                ) from err
         return self._client
 
     async def embed(self, texts: list[str]) -> np.ndarray:

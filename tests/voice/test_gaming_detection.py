@@ -1,8 +1,6 @@
 """Tests for voice gaming detection."""
 
-from datetime import datetime
 
-import numpy as np
 import pytest
 
 from mentor.voice.gaming_detection import (
@@ -346,8 +344,8 @@ class TestVoiceGamingDetector:
         )
 
         # Should be more likely to flag for easy questions
-        easy_flags = len(easy_analysis.flags)
-        hard_flags = len(hard_analysis.flags)
+        len(easy_analysis.flags)
+        len(hard_analysis.flags)
 
         # At minimum, both should run without error
         assert isinstance(easy_analysis, VoiceGamingAnalysis)

@@ -1,6 +1,7 @@
 """Tests for database session management."""
 
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+import contextlib
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
@@ -69,10 +70,8 @@ class TestDatabaseDependency:
         gen = mock_get_db()
         await gen.__anext__()
 
-        try:
+        with contextlib.suppress(StopAsyncIteration):
             await gen.__anext__()
-        except StopAsyncIteration:
-            pass
 
         mock_session.close.assert_called_once()
 
