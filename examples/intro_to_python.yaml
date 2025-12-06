@@ -1,0 +1,145 @@
+# Example Course Configuration: Introduction to Python
+# This file demonstrates how to define a course for Mentor
+
+course:
+  name: "Introduction to Python Programming"
+  code: "CS101"
+  description: "A beginner-friendly introduction to programming using Python"
+
+pedagogy:
+  teaching_style: socratic
+  difficulty_progression: adaptive
+  hint_frequency: medium
+  encouragement_level: high
+  max_hints_per_problem: 3
+  wait_time_seconds: 30
+
+concepts:
+  - id: variables
+    name: "Variables and Data Types"
+    description: "Understanding how to store and manipulate data in Python"
+    bloom_level: understand
+    prerequisites: []
+    learning_objectives:
+      - "Declare and assign variables"
+      - "Identify Python data types (int, float, str, bool)"
+      - "Perform type conversions"
+
+  - id: operators
+    name: "Operators and Expressions"
+    description: "Mathematical and logical operations in Python"
+    bloom_level: apply
+    prerequisites: [variables]
+    learning_objectives:
+      - "Use arithmetic operators (+, -, *, /, //, %, **)"
+      - "Apply comparison operators"
+      - "Combine expressions with logical operators"
+
+  - id: conditionals
+    name: "Conditional Statements"
+    description: "Making decisions in code with if/elif/else"
+    bloom_level: apply
+    prerequisites: [operators]
+    learning_objectives:
+      - "Write if statements with proper syntax"
+      - "Use elif for multiple conditions"
+      - "Nest conditional statements appropriately"
+
+  - id: loops
+    name: "Loops and Iteration"
+    description: "Repeating code with for and while loops"
+    bloom_level: apply
+    prerequisites: [conditionals]
+    learning_objectives:
+      - "Use for loops to iterate over sequences"
+      - "Write while loops with proper termination"
+      - "Apply break and continue statements"
+
+  - id: functions
+    name: "Functions"
+    description: "Creating reusable code blocks"
+    bloom_level: apply
+    prerequisites: [loops]
+    learning_objectives:
+      - "Define functions with parameters"
+      - "Return values from functions"
+      - "Understand variable scope"
+
+  - id: lists
+    name: "Lists and List Operations"
+    description: "Working with ordered collections of data"
+    bloom_level: apply
+    prerequisites: [loops]
+    learning_objectives:
+      - "Create and modify lists"
+      - "Access elements with indexing and slicing"
+      - "Use common list methods"
+
+  - id: dictionaries
+    name: "Dictionaries"
+    description: "Key-value data storage"
+    bloom_level: apply
+    prerequisites: [lists]
+    learning_objectives:
+      - "Create and populate dictionaries"
+      - "Access and modify dictionary values"
+      - "Iterate over dictionary items"
+
+  - id: file_io
+    name: "File Input/Output"
+    description: "Reading from and writing to files"
+    bloom_level: apply
+    prerequisites: [functions, lists]
+    learning_objectives:
+      - "Open files in different modes"
+      - "Read file contents"
+      - "Write data to files"
+      - "Use context managers (with statement)"
+
+misconceptions:
+  - concept_id: variables
+    misconception: "Variables are like boxes that hold values"
+    correction: "Variables are names that reference objects in memory. Multiple variables can reference the same object."
+    detection_patterns:
+      - "copy.*variable"
+      - "put.*into.*variable"
+
+  - concept_id: operators
+    misconception: "The = operator checks equality"
+    correction: "The = operator assigns a value. Use == to check equality."
+    detection_patterns:
+      - "if.*[^=]=[^=]"
+
+  - concept_id: conditionals
+    misconception: "elif means 'else if the previous condition was true'"
+    correction: "elif is checked only when all previous conditions were False."
+    detection_patterns:
+      - "elif.*after.*true"
+
+  - concept_id: loops
+    misconception: "range(5) includes the number 5"
+    correction: "range(5) generates 0, 1, 2, 3, 4. The stop value is exclusive."
+    detection_patterns:
+      - "range.*includes.*end"
+      - "range\\(5\\).*5"
+
+  - concept_id: functions
+    misconception: "Variables defined inside a function are accessible outside"
+    correction: "Local variables exist only within their function's scope. Use return to pass values out."
+    detection_patterns:
+      - "access.*local.*outside"
+      - "variable.*not defined"
+
+  - concept_id: lists
+    misconception: "Copying a list with = creates an independent copy"
+    correction: "Assignment (=) creates a reference to the same list. Use list.copy() or list[:] for a true copy."
+    detection_patterns:
+      - "copy.*list.*="
+      - "both.*changed"
+
+mastery_thresholds:
+  novice: 0.0
+  beginner: 0.3
+  developing: 0.5
+  proficient: 0.7
+  mastered: 0.9

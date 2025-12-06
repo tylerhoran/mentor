@@ -1,0 +1,157 @@
+# Example Course Configuration: Calculus I
+# Demonstrates a mathematics course with interconnected concepts
+
+course:
+  name: "Calculus I"
+  code: "MATH201"
+  description: "Introduction to differential calculus"
+
+pedagogy:
+  teaching_style: scaffold
+  difficulty_progression: linear
+  hint_frequency: low
+  encouragement_level: medium
+  max_hints_per_problem: 2
+  wait_time_seconds: 60
+
+concepts:
+  - id: limits_intuition
+    name: "Intuitive Understanding of Limits"
+    description: "Developing intuition for what limits represent"
+    bloom_level: understand
+    prerequisites: []
+    learning_objectives:
+      - "Describe limits using informal language"
+      - "Estimate limits from graphs"
+      - "Identify when limits do not exist"
+
+  - id: limits_formal
+    name: "Formal Definition of Limits"
+    description: "The epsilon-delta definition of limits"
+    bloom_level: understand
+    prerequisites: [limits_intuition]
+    learning_objectives:
+      - "State the epsilon-delta definition"
+      - "Explain the role of epsilon and delta"
+      - "Verify simple limits using the definition"
+
+  - id: limit_laws
+    name: "Limit Laws and Techniques"
+    description: "Algebraic techniques for evaluating limits"
+    bloom_level: apply
+    prerequisites: [limits_intuition]
+    learning_objectives:
+      - "Apply sum, product, and quotient rules"
+      - "Use algebraic manipulation to resolve indeterminate forms"
+      - "Apply the squeeze theorem"
+
+  - id: continuity
+    name: "Continuity"
+    description: "Understanding continuous functions"
+    bloom_level: apply
+    prerequisites: [limit_laws]
+    learning_objectives:
+      - "Define continuity at a point"
+      - "Identify discontinuities and their types"
+      - "Apply the Intermediate Value Theorem"
+
+  - id: derivative_definition
+    name: "Definition of the Derivative"
+    description: "The derivative as a limit"
+    bloom_level: understand
+    prerequisites: [limit_laws]
+    learning_objectives:
+      - "Compute derivatives using the limit definition"
+      - "Interpret the derivative as instantaneous rate of change"
+      - "Connect derivatives to tangent lines"
+
+  - id: derivative_rules
+    name: "Differentiation Rules"
+    description: "Techniques for computing derivatives"
+    bloom_level: apply
+    prerequisites: [derivative_definition]
+    learning_objectives:
+      - "Apply power, product, and quotient rules"
+      - "Differentiate polynomial and rational functions"
+      - "Use the chain rule for composite functions"
+
+  - id: implicit_differentiation
+    name: "Implicit Differentiation"
+    description: "Finding derivatives of implicitly defined functions"
+    bloom_level: apply
+    prerequisites: [derivative_rules]
+    learning_objectives:
+      - "Differentiate equations not solved for y"
+      - "Find tangent lines to implicitly defined curves"
+      - "Solve related rates problems"
+
+  - id: applications_derivatives
+    name: "Applications of Derivatives"
+    description: "Using derivatives to analyze functions"
+    bloom_level: analyze
+    prerequisites: [derivative_rules]
+    learning_objectives:
+      - "Find critical points and extrema"
+      - "Determine intervals of increase/decrease"
+      - "Analyze concavity and inflection points"
+      - "Solve optimization problems"
+
+  - id: lhopital
+    name: "L'Hôpital's Rule"
+    description: "Using derivatives to evaluate limits"
+    bloom_level: apply
+    prerequisites: [derivative_rules, limit_laws]
+    learning_objectives:
+      - "Identify indeterminate forms"
+      - "Apply L'Hôpital's Rule correctly"
+      - "Recognize when the rule does not apply"
+
+misconceptions:
+  - concept_id: limits_intuition
+    misconception: "The limit equals the function value at that point"
+    correction: "The limit describes the value the function approaches, which may differ from (or exist when) the actual function value at that point."
+    detection_patterns:
+      - "limit.*equals.*f\\(.*\\)"
+      - "plug.*in"
+
+  - concept_id: limit_laws
+    misconception: "0/0 always equals 0 or is undefined"
+    correction: "0/0 is an indeterminate form - the actual limit can be any value or may not exist. Further analysis is required."
+    detection_patterns:
+      - "0/0.*undefined"
+      - "0/0.*equals.*0"
+
+  - concept_id: derivative_definition
+    misconception: "The derivative is the slope of the function"
+    correction: "The derivative gives the slope of the tangent line at each point, not the slope of the function itself (which may not be a line)."
+    detection_patterns:
+      - "derivative.*is.*slope"
+      - "slope.*of.*function"
+
+  - concept_id: derivative_rules
+    misconception: "The derivative of a product is the product of derivatives"
+    correction: "The product rule states: (fg)' = f'g + fg'. You cannot simply multiply the individual derivatives."
+    detection_patterns:
+      - "derivative.*product.*multiply"
+      - "\\(fg\\)'.*=.*f'g'"
+
+  - concept_id: applications_derivatives
+    misconception: "A critical point is always a maximum or minimum"
+    correction: "Critical points occur where f'(x) = 0 or is undefined, but these can also be inflection points. The second derivative test or first derivative test is needed."
+    detection_patterns:
+      - "critical.*always.*extremum"
+      - "f'.*=.*0.*maximum"
+
+  - concept_id: lhopital
+    misconception: "L'Hôpital's Rule can be applied to any limit"
+    correction: "L'Hôpital's Rule only applies to indeterminate forms like 0/0 or ∞/∞. Using it on other forms gives incorrect results."
+    detection_patterns:
+      - "always.*use.*l'hopital"
+      - "l'hopital.*any.*limit"
+
+mastery_thresholds:
+  novice: 0.0
+  beginner: 0.25
+  developing: 0.5
+  proficient: 0.75
+  mastered: 0.95

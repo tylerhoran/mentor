@@ -1,0 +1,111 @@
+[project]
+name = "mentor"
+version = "0.1.0"
+description = "Open-source platform for faculty-controlled AI tutoring and assessment"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [
+    { name = "Mentor Contributors" }
+]
+keywords = ["education", "ai", "tutoring", "assessment", "llm"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "sqlalchemy[asyncio]>=2.0.25",
+    "asyncpg>=0.29.0",
+    "alembic>=1.13.0",
+    "pgvector>=0.2.4",
+    "redis>=5.0.0",
+    "httpx>=0.26.0",
+    "python-multipart>=0.0.6",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "aiofiles>=23.2.1",
+    "networkx>=3.2.0",
+    "pyyaml>=6.0.1",
+    "pypdf>=3.17.0",
+    "pdfplumber>=0.10.0",
+    "python-docx>=1.1.0",
+    "sentence-transformers>=2.2.0",
+    "numpy>=1.26.0",
+    "ollama>=0.1.0",
+    "openai>=1.10.0",
+    "anthropic>=0.18.0",
+    "tiktoken>=0.5.0",
+    "tenacity>=8.2.0",
+    "structlog>=24.1.0",
+    # Voice layer dependencies
+    "websockets>=12.0",
+    "soundfile>=0.12.0",
+    "librosa>=0.10.0",
+]
+
+[project.optional-dependencies]
+voice = [
+    "faster-whisper>=0.10.0",
+    "TTS>=0.22.0",
+    "piper-tts>=1.2.0",
+    "torch>=2.0.0",
+    "torchaudio>=2.0.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+    "httpx>=0.26.0",
+]
+research = [
+    "jupyter>=1.0.0",
+    "pandas>=2.1.0",
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+    "scipy>=1.12.0",
+    "scikit-learn>=1.4.0",
+]
+all = [
+    "mentor[voice,dev,research]",
+]
+
+[project.scripts]
+mentor = "mentor.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mentor"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --cov=mentor --cov-report=term-missing -p no:flask"
