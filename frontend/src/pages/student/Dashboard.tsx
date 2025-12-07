@@ -1,9 +1,14 @@
-import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '../../api/client';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { useAuthStore } from '../../stores/auth';
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../../api/client";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { useAuthStore } from "../../stores/auth";
 
 interface EnrolledCourse {
   id: string;
@@ -21,22 +26,23 @@ export default function StudentDashboard() {
   const { user } = useAuthStore();
 
   const { data: courses, isLoading } = useQuery({
-    queryKey: ['enrolledCourses'],
-    queryFn: () => api.get<EnrolledCourse[]>('/students/courses'),
+    queryKey: ["enrolledCourses"],
+    queryFn: () => api.get<EnrolledCourse[]>("/students/courses"),
   });
 
   const getMasteryColor = (level: number) => {
-    if (level >= 0.8) return 'bg-green-500';
-    if (level >= 0.6) return 'bg-yellow-500';
-    if (level >= 0.4) return 'bg-orange-500';
-    return 'bg-red-500';
+    if (level >= 0.8) return "bg-green-500";
+    if (level >= 0.6) return "bg-yellow-500";
+    if (level >= 0.4) return "bg-orange-500";
+    return "bg-red-500";
   };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back{user?.full_name ? `, ${user.full_name.split(' ')[0]}` : ''}!
+          Welcome back
+          {user?.full_name ? `, ${user.full_name.split(" ")[0]}` : ""}!
         </h1>
         <p className="text-gray-500">Continue your learning journey</p>
       </div>
@@ -49,9 +55,12 @@ export default function StudentDashboard() {
         <Card>
           <CardContent className="py-12 text-center">
             <div className="text-4xl mb-4">📚</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No courses yet</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No courses yet
+            </h3>
             <p className="text-gray-500 mb-4">
-              You're not enrolled in any courses. Ask your instructor for an enrollment code.
+              You're not enrolled in any courses. Ask your instructor for an
+              enrollment code.
             </p>
             <Button variant="outline">Enter Enrollment Code</Button>
           </CardContent>
@@ -91,7 +100,9 @@ export default function StudentDashboard() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <div>
-                          <h3 className="font-medium text-gray-900">{course.name}</h3>
+                          <h3 className="font-medium text-gray-900">
+                            {course.name}
+                          </h3>
                           <p className="text-sm text-gray-500">
                             {course.code} &middot; {course.instructor_name}
                           </p>
@@ -101,26 +112,35 @@ export default function StudentDashboard() {
                         <div className="flex-1 max-w-xs">
                           <div className="flex justify-between text-xs text-gray-500 mb-1">
                             <span>Progress</span>
-                            <span>{Math.round(course.overall_mastery * 100)}%</span>
+                            <span>
+                              {Math.round(course.overall_mastery * 100)}%
+                            </span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
                               className={`h-2 rounded-full ${getMasteryColor(course.overall_mastery)}`}
-                              style={{ width: `${course.overall_mastery * 100}%` }}
+                              style={{
+                                width: `${course.overall_mastery * 100}%`,
+                              }}
                             />
                           </div>
                         </div>
                         <div className="text-sm text-gray-500">
-                          {course.concepts_mastered}/{course.total_concepts} concepts
+                          {course.concepts_mastered}/{course.total_concepts}{" "}
+                          concepts
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 ml-4">
                       <Link to={`/student/courses/${course.id}/progress`}>
-                        <Button variant="outline" size="sm">Progress</Button>
+                        <Button variant="outline" size="sm">
+                          Progress
+                        </Button>
                       </Link>
                       <Link to={`/student/courses/${course.id}/history`}>
-                        <Button variant="outline" size="sm">History</Button>
+                        <Button variant="outline" size="sm">
+                          History
+                        </Button>
                       </Link>
                       <Link to={`/student/courses/${course.id}/tutor`}>
                         <Button size="sm">Learn</Button>
@@ -140,15 +160,25 @@ export default function StudentDashboard() {
             <CardContent>
               <div className="space-y-3">
                 {courses
-                  .filter(c => c.last_session)
-                  .sort((a, b) => new Date(b.last_session!).getTime() - new Date(a.last_session!).getTime())
+                  .filter((c) => c.last_session)
+                  .sort(
+                    (a, b) =>
+                      new Date(b.last_session!).getTime() -
+                      new Date(a.last_session!).getTime(),
+                  )
                   .slice(0, 5)
                   .map((course) => (
-                    <div key={course.id} className="flex items-center justify-between py-2 border-b last:border-0">
+                    <div
+                      key={course.id}
+                      className="flex items-center justify-between py-2 border-b last:border-0"
+                    >
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{course.name}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {course.name}
+                        </div>
                         <div className="text-xs text-gray-500">
-                          Last session: {new Date(course.last_session!).toLocaleDateString()}
+                          Last session:{" "}
+                          {new Date(course.last_session!).toLocaleDateString()}
                         </div>
                       </div>
                       <Link
@@ -159,8 +189,10 @@ export default function StudentDashboard() {
                       </Link>
                     </div>
                   ))}
-                {!courses.some(c => c.last_session) && (
-                  <p className="text-gray-500 text-center py-4">No recent activity</p>
+                {!courses.some((c) => c.last_session) && (
+                  <p className="text-gray-500 text-center py-4">
+                    No recent activity
+                  </p>
                 )}
               </div>
             </CardContent>

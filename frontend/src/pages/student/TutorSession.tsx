@@ -1,13 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { api } from '../../api/client';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { useState, useRef, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { api } from "../../api/client";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: string;
   pedagogical_move?: string;
@@ -30,15 +30,15 @@ interface SessionInfo {
 
 export default function TutorSession() {
   const { courseId } = useParams<{ courseId: string }>();
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [streamingContent, setStreamingContent] = useState('');
+  const [streamingContent, setStreamingContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: session } = useQuery({
-    queryKey: ['tutorSession', courseId],
+    queryKey: ["tutorSession", courseId],
     queryFn: () => api.get<SessionInfo>(`/tutor/session/${courseId}`),
     refetchOnWindowFocus: false,
   });
@@ -50,40 +50,44 @@ export default function TutorSession() {
   }, [session]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
 
   const sendMessage = useMutation({
     mutationFn: async (content: string) => {
       setIsStreaming(true);
-      setStreamingContent('');
+      setStreamingContent("");
 
       const userMessage: Message = {
         id: `temp-${Date.now()}`,
-        role: 'user',
+        role: "user",
         content,
         timestamp: new Date().toISOString(),
       };
-      setMessages(prev => [...prev, userMessage]);
+      setMessages((prev) => [...prev, userMessage]);
 
-      let fullResponse = '';
+      let fullResponse = "";
 
-      await api.stream(`/tutor/message/${courseId}`, {
-        message: content,
-      }, (chunk) => {
-        fullResponse += chunk;
-        setStreamingContent(fullResponse);
-      });
+      await api.stream(
+        `/tutor/message/${courseId}`,
+        {
+          message: content,
+        },
+        (chunk) => {
+          fullResponse += chunk;
+          setStreamingContent(fullResponse);
+        },
+      );
 
       const assistantMessage: Message = {
         id: `response-${Date.now()}`,
-        role: 'assistant',
+        role: "assistant",
         content: fullResponse,
         timestamp: new Date().toISOString(),
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
-      setStreamingContent('');
+      setMessages((prev) => [...prev, assistantMessage]);
+      setStreamingContent("");
       setIsStreaming(false);
     },
   });
@@ -93,12 +97,12 @@ export default function TutorSession() {
     if (!input.trim() || isStreaming) return;
 
     const message = input.trim();
-    setInput('');
+    setInput("");
     sendMessage.mutate(message);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
@@ -113,14 +117,20 @@ export default function TutorSession() {
             &larr;
           </Link>
           <div>
-            <h1 className="font-semibold text-gray-900">{session?.course_name || 'Loading...'}</h1>
+            <h1 className="font-semibold text-gray-900">
+              {session?.course_name || "Loading..."}
+            </h1>
             {session?.current_concept && (
-              <p className="text-sm text-gray-500">Currently discussing: {session.current_concept}</p>
+              <p className="text-sm text-gray-500">
+                Currently discussing: {session.current_concept}
+              </p>
             )}
           </div>
         </div>
         <Link to={`/student/courses/${courseId}/progress`}>
-          <Button variant="outline" size="sm">View Progress</Button>
+          <Button variant="outline" size="sm">
+            View Progress
+          </Button>
         </Link>
       </header>
 
@@ -130,13 +140,19 @@ export default function TutorSession() {
           {messages.length === 0 && !isStreaming && (
             <div className="text-center py-12">
               <div className="text-4xl mb-4">👋</div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Welcome to your tutoring session!</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Welcome to your tutoring session!
+              </h2>
               <p className="text-gray-500 max-w-md mx-auto">
-                Ask me anything about the course material. I'm here to help you understand concepts
-                and guide you through problems.
+                Ask me anything about the course material. I'm here to help you
+                understand concepts and guide you through problems.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-2">
-                {['Explain the main concept', 'Give me a practice problem', 'Review what we covered'].map((prompt) => (
+                {[
+                  "Explain the main concept",
+                  "Give me a practice problem",
+                  "Review what we covered",
+                ].map((prompt) => (
                   <button
                     key={prompt}
                     onClick={() => setInput(prompt)}
@@ -152,13 +168,13 @@ export default function TutorSession() {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
                 className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                  message.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white border text-gray-900'
+                  message.role === "user"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white border text-gray-900"
                 }`}
               >
                 <div className="whitespace-pre-wrap">{message.content}</div>
@@ -184,9 +200,18 @@ export default function TutorSession() {
             <div className="flex justify-start">
               <div className="max-w-[80%] rounded-lg px-4 py-3 bg-white border">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <div
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <div
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "300ms" }}
+                  />
                 </div>
               </div>
             </div>
@@ -199,9 +224,13 @@ export default function TutorSession() {
       {/* Mastery Update Toast */}
       {session?.mastery_update && (
         <div className="fixed bottom-24 right-4 bg-green-50 border border-green-200 rounded-lg px-4 py-3 shadow-lg">
-          <div className="text-sm font-medium text-green-800">Mastery Updated!</div>
+          <div className="text-sm font-medium text-green-800">
+            Mastery Updated!
+          </div>
           <div className="text-xs text-green-600">
-            {session.mastery_update.concept}: {Math.round(session.mastery_update.previous * 100)}% → {Math.round(session.mastery_update.current * 100)}%
+            {session.mastery_update.concept}:{" "}
+            {Math.round(session.mastery_update.previous * 100)}% →{" "}
+            {Math.round(session.mastery_update.current * 100)}%
           </div>
         </div>
       )}

@@ -134,13 +134,13 @@ class DocxProcessor(DocumentProcessor):
 
             doc = Document(str(file_path))
 
-            structure = {
+            structure: dict[str, Any] = {
                 "sections": [],
                 "tables": [],
                 "metadata": {},
             }
 
-            current_section = {"heading": None, "paragraphs": []}
+            current_section: dict[str, Any] = {"heading": None, "paragraphs": []}
 
             for para in doc.paragraphs:
                 if para.style.name.startswith("Heading"):

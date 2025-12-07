@@ -40,12 +40,14 @@ async def get_class_overview(
         raise HTTPException(status_code=403, detail="Access denied")
 
     # Get all student states
-    result = await db.execute(select(StudentState).where(StudentState.course_id == course_id))
-    states = list(result.scalars().all())
+    states_result = await db.execute(
+        select(StudentState).where(StudentState.course_id == course_id)
+    )
+    states: list[StudentState] = list(states_result.scalars().all())
 
     # Get concepts
-    result = await db.execute(select(Concept).where(Concept.course_id == course_id))
-    concepts = {c.id: c for c in result.scalars().all()}
+    concepts_result = await db.execute(select(Concept).where(Concept.course_id == course_id))
+    concepts: dict[str, Concept] = {c.id: c for c in concepts_result.scalars().all()}
 
     total_students = len(states)
     if total_students == 0:

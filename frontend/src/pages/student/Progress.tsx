@@ -1,8 +1,13 @@
-import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '../../api/client';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../../api/client";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
 
 interface StudentProgress {
   course_id: string;
@@ -37,7 +42,7 @@ export default function Progress() {
   const { courseId } = useParams<{ courseId: string }>();
 
   const { data: progress, isLoading } = useQuery({
-    queryKey: ['studentProgress', courseId],
+    queryKey: ["studentProgress", courseId],
     queryFn: () => api.get<StudentProgress>(`/students/progress/${courseId}`),
   });
 
@@ -58,18 +63,18 @@ export default function Progress() {
   }
 
   const getMasteryColor = (level: number) => {
-    if (level >= 0.8) return 'bg-green-500';
-    if (level >= 0.6) return 'bg-yellow-500';
-    if (level >= 0.4) return 'bg-orange-500';
-    return 'bg-red-500';
+    if (level >= 0.8) return "bg-green-500";
+    if (level >= 0.6) return "bg-yellow-500";
+    if (level >= 0.4) return "bg-orange-500";
+    return "bg-red-500";
   };
 
   const getMasteryLabel = (level: number) => {
-    if (level >= 0.8) return 'Mastered';
-    if (level >= 0.6) return 'Proficient';
-    if (level >= 0.4) return 'Developing';
-    if (level >= 0.2) return 'Beginning';
-    return 'Not Started';
+    if (level >= 0.8) return "Mastered";
+    if (level >= 0.6) return "Proficient";
+    if (level >= 0.4) return "Developing";
+    if (level >= 0.2) return "Beginning";
+    return "Not Started";
   };
 
   return (
@@ -109,21 +114,27 @@ export default function Progress() {
         <Card>
           <CardContent className="pt-6">
             <div className="text-3xl font-bold text-gray-900">
-              {progress.concepts.filter(c => c.mastery_level >= 0.8).length}
-              <span className="text-lg font-normal text-gray-400">/{progress.concepts.length}</span>
+              {progress.concepts.filter((c) => c.mastery_level >= 0.8).length}
+              <span className="text-lg font-normal text-gray-400">
+                /{progress.concepts.length}
+              </span>
             </div>
             <div className="text-sm text-gray-500">Concepts Mastered</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-3xl font-bold text-gray-900">{progress.total_time_minutes}</div>
+            <div className="text-3xl font-bold text-gray-900">
+              {progress.total_time_minutes}
+            </div>
             <div className="text-sm text-gray-500">Minutes Learning</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-3xl font-bold text-gray-900">{progress.total_interactions}</div>
+            <div className="text-3xl font-bold text-gray-900">
+              {progress.total_interactions}
+            </div>
             <div className="text-sm text-gray-500">Interactions</div>
           </CardContent>
         </Card>
@@ -143,7 +154,10 @@ export default function Progress() {
                   <div key={idx} className="flex-1 flex flex-col items-center">
                     <div
                       className="w-full bg-blue-500 rounded-t transition-all"
-                      style={{ height: `${height}%`, minHeight: point.mastery > 0 ? '4px' : '0' }}
+                      style={{
+                        height: `${height}%`,
+                        minHeight: point.mastery > 0 ? "4px" : "0",
+                      }}
                       title={`${new Date(point.date).toLocaleDateString()}: ${Math.round(point.mastery * 100)}% mastery`}
                     />
                   </div>
@@ -153,11 +167,17 @@ export default function Progress() {
             <div className="flex justify-between text-xs text-gray-400 mt-2">
               <span>
                 {progress.learning_trajectory.length > 0 &&
-                  new Date(progress.learning_trajectory[0].date).toLocaleDateString()}
+                  new Date(
+                    progress.learning_trajectory[0].date,
+                  ).toLocaleDateString()}
               </span>
               <span>
                 {progress.learning_trajectory.length > 0 &&
-                  new Date(progress.learning_trajectory[progress.learning_trajectory.length - 1].date).toLocaleDateString()}
+                  new Date(
+                    progress.learning_trajectory[
+                      progress.learning_trajectory.length - 1
+                    ].date,
+                  ).toLocaleDateString()}
               </span>
             </div>
           </CardContent>
@@ -171,10 +191,15 @@ export default function Progress() {
           <CardContent>
             {progress.strengths.length > 0 && (
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-green-700 mb-2">Strengths</h4>
+                <h4 className="text-sm font-medium text-green-700 mb-2">
+                  Strengths
+                </h4>
                 <ul className="space-y-1">
                   {progress.strengths.map((strength, idx) => (
-                    <li key={idx} className="text-sm text-gray-600 flex items-start gap-2">
+                    <li
+                      key={idx}
+                      className="text-sm text-gray-600 flex items-start gap-2"
+                    >
                       <span className="text-green-500">+</span>
                       {strength}
                     </li>
@@ -184,10 +209,15 @@ export default function Progress() {
             )}
             {progress.areas_for_improvement.length > 0 && (
               <div>
-                <h4 className="text-sm font-medium text-orange-700 mb-2">Focus Areas</h4>
+                <h4 className="text-sm font-medium text-orange-700 mb-2">
+                  Focus Areas
+                </h4>
                 <ul className="space-y-1">
                   {progress.areas_for_improvement.map((area, idx) => (
-                    <li key={idx} className="text-sm text-gray-600 flex items-start gap-2">
+                    <li
+                      key={idx}
+                      className="text-sm text-gray-600 flex items-start gap-2"
+                    >
                       <span className="text-orange-500">!</span>
                       {area}
                     </li>
@@ -210,7 +240,7 @@ export default function Progress() {
               <div
                 key={concept.id}
                 className={`p-4 border rounded-lg ${
-                  concept.is_unlocked ? 'bg-white' : 'bg-gray-50 opacity-60'
+                  concept.is_unlocked ? "bg-white" : "bg-gray-50 opacity-60"
                 }`}
               >
                 <div className="flex items-start justify-between mb-2">
@@ -219,18 +249,27 @@ export default function Progress() {
                     <span className="text-xs text-gray-400">Locked</span>
                   )}
                 </div>
-                <p className="text-xs text-gray-500 mb-3 line-clamp-2">{concept.description}</p>
+                <p className="text-xs text-gray-500 mb-3 line-clamp-2">
+                  {concept.description}
+                </p>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className={`font-medium ${
-                      concept.mastery_level >= 0.8 ? 'text-green-600' :
-                      concept.mastery_level >= 0.6 ? 'text-yellow-600' :
-                      concept.mastery_level >= 0.4 ? 'text-orange-600' :
-                      'text-gray-600'
-                    }`}>
+                    <span
+                      className={`font-medium ${
+                        concept.mastery_level >= 0.8
+                          ? "text-green-600"
+                          : concept.mastery_level >= 0.6
+                            ? "text-yellow-600"
+                            : concept.mastery_level >= 0.4
+                              ? "text-orange-600"
+                              : "text-gray-600"
+                      }`}
+                    >
                       {getMasteryLabel(concept.mastery_level)}
                     </span>
-                    <span className="text-gray-400">{Math.round(concept.mastery_level * 100)}%</span>
+                    <span className="text-gray-400">
+                      {Math.round(concept.mastery_level * 100)}%
+                    </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
@@ -241,7 +280,10 @@ export default function Progress() {
                   <div className="flex justify-between text-xs text-gray-400">
                     <span>{concept.attempts} attempts</span>
                     {concept.last_practiced && (
-                      <span>Last: {new Date(concept.last_practiced).toLocaleDateString()}</span>
+                      <span>
+                        Last:{" "}
+                        {new Date(concept.last_practiced).toLocaleDateString()}
+                      </span>
                     )}
                   </div>
                 </div>

@@ -38,8 +38,8 @@ async def get_mastery_report(
 ) -> MasteryReport:
     """Get mastery report for a student."""
     # Verify course ownership
-    result = await db.execute(select(Course).where(Course.id == course_id))
-    course = result.scalar_one_or_none()
+    course_result = await db.execute(select(Course).where(Course.id == course_id))
+    course = course_result.scalar_one_or_none()
 
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -48,20 +48,20 @@ async def get_mastery_report(
         raise HTTPException(status_code=403, detail="Access denied")
 
     # Get student state
-    result = await db.execute(
+    state_result = await db.execute(
         select(StudentState).where(
             StudentState.student_id == student_id,
             StudentState.course_id == course_id,
         )
     )
-    state = result.scalar_one_or_none()
+    state = state_result.scalar_one_or_none()
 
     if not state:
         raise HTTPException(status_code=404, detail="Student not enrolled in this course")
 
     # Get concepts for names
-    result = await db.execute(select(Concept).where(Concept.course_id == course_id))
-    concepts = {c.id: c for c in result.scalars().all()}
+    concepts_result = await db.execute(select(Concept).where(Concept.course_id == course_id))
+    concepts: dict[str, Concept] = {c.id: c for c in concepts_result.scalars().all()}
 
     # Build mastery estimates
     mastery_estimates = []

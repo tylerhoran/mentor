@@ -1,9 +1,14 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '../../api/client';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../../api/client";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
 
 interface SessionHistory {
   sessions: Session[];
@@ -46,7 +51,7 @@ interface SessionDetail {
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: string;
   pedagogical_move?: string;
@@ -58,13 +63,17 @@ export default function History() {
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
 
   const { data: history, isLoading } = useQuery({
-    queryKey: ['sessionHistory', courseId, page],
-    queryFn: () => api.get<SessionHistory>(`/students/sessions/${courseId}?page=${page}&page_size=10`),
+    queryKey: ["sessionHistory", courseId, page],
+    queryFn: () =>
+      api.get<SessionHistory>(
+        `/students/sessions/${courseId}?page=${page}&page_size=10`,
+      ),
   });
 
   const { data: sessionDetail, isLoading: isLoadingDetail } = useQuery({
-    queryKey: ['sessionDetail', selectedSession],
-    queryFn: () => api.get<SessionDetail>(`/students/sessions/detail/${selectedSession}`),
+    queryKey: ["sessionDetail", selectedSession],
+    queryFn: () =>
+      api.get<SessionDetail>(`/students/sessions/detail/${selectedSession}`),
     enabled: !!selectedSession,
   });
 
@@ -103,7 +112,9 @@ export default function History() {
             </CardHeader>
             <CardContent>
               {!history?.sessions.length ? (
-                <p className="text-gray-500 text-center py-8">No sessions yet</p>
+                <p className="text-gray-500 text-center py-8">
+                  No sessions yet
+                </p>
               ) : (
                 <div className="space-y-2">
                   {history.sessions.map((session) => (
@@ -112,8 +123,8 @@ export default function History() {
                       onClick={() => setSelectedSession(session.id)}
                       className={`w-full text-left p-3 rounded-lg border transition-colors ${
                         selectedSession === session.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:bg-gray-50'
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:bg-gray-50"
                       }`}
                     >
                       <div className="flex justify-between items-start">
@@ -122,27 +133,36 @@ export default function History() {
                             {new Date(session.started_at).toLocaleDateString()}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {new Date(session.started_at).toLocaleTimeString([], {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
+                            {new Date(session.started_at).toLocaleTimeString(
+                              [],
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              },
+                            )}
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-sm text-gray-600">{session.message_count} msgs</div>
-                          <div className="text-xs text-gray-400">{session.duration_minutes} min</div>
+                          <div className="text-sm text-gray-600">
+                            {session.message_count} msgs
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {session.duration_minutes} min
+                          </div>
                         </div>
                       </div>
                       {session.concepts_covered.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
-                          {session.concepts_covered.slice(0, 2).map((concept) => (
-                            <span
-                              key={concept.id}
-                              className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-xs rounded"
-                            >
-                              {concept.name}
-                            </span>
-                          ))}
+                          {session.concepts_covered
+                            .slice(0, 2)
+                            .map((concept) => (
+                              <span
+                                key={concept.id}
+                                className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-xs rounded"
+                              >
+                                {concept.name}
+                              </span>
+                            ))}
                           {session.concepts_covered.length > 2 && (
                             <span className="text-xs text-gray-400">
                               +{session.concepts_covered.length - 2}
@@ -161,18 +181,19 @@ export default function History() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
                   >
                     Previous
                   </Button>
                   <span className="text-sm text-gray-500">
-                    Page {page} of {Math.ceil(history.total_count / history.page_size)}
+                    Page {page} of{" "}
+                    {Math.ceil(history.total_count / history.page_size)}
                   </span>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setPage(p => p + 1)}
+                    onClick={() => setPage((p) => p + 1)}
                     disabled={page * history.page_size >= history.total_count}
                   >
                     Next
@@ -188,7 +209,9 @@ export default function History() {
           {!selectedSession ? (
             <Card>
               <CardContent className="py-12">
-                <p className="text-gray-500 text-center">Select a session to view details</p>
+                <p className="text-gray-500 text-center">
+                  Select a session to view details
+                </p>
               </CardContent>
             </Card>
           ) : isLoadingDetail ? (
@@ -219,36 +242,44 @@ export default function History() {
                       <div className="font-medium">
                         {sessionDetail.ended_at
                           ? `${Math.round((new Date(sessionDetail.ended_at).getTime() - new Date(sessionDetail.started_at).getTime()) / 60000)} min`
-                          : 'In progress'}
+                          : "In progress"}
                       </div>
                     </div>
                     <div>
                       <div className="text-sm text-gray-500">Messages</div>
-                      <div className="font-medium">{sessionDetail.messages.length}</div>
+                      <div className="font-medium">
+                        {sessionDetail.messages.length}
+                      </div>
                     </div>
                     <div>
                       <div className="text-sm text-gray-500">Concepts</div>
-                      <div className="font-medium">{sessionDetail.concepts_covered.length}</div>
+                      <div className="font-medium">
+                        {sessionDetail.concepts_covered.length}
+                      </div>
                     </div>
                   </div>
 
                   {/* Mastery Changes */}
                   {sessionDetail.mastery_changes.length > 0 && (
                     <div className="mt-4 pt-4 border-t">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">Mastery Changes</h4>
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">
+                        Mastery Changes
+                      </h4>
                       <div className="flex flex-wrap gap-2">
                         {sessionDetail.mastery_changes.map((change) => (
                           <div
                             key={change.concept_id}
                             className={`px-2 py-1 rounded text-xs ${
                               change.after > change.before
-                                ? 'bg-green-100 text-green-700'
+                                ? "bg-green-100 text-green-700"
                                 : change.after < change.before
-                                ? 'bg-red-100 text-red-700'
-                                : 'bg-gray-100 text-gray-700'
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-gray-100 text-gray-700"
                             }`}
                           >
-                            {change.concept_name}: {Math.round(change.before * 100)}% → {Math.round(change.after * 100)}%
+                            {change.concept_name}:{" "}
+                            {Math.round(change.before * 100)}% →{" "}
+                            {Math.round(change.after * 100)}%
                           </div>
                         ))}
                       </div>
@@ -267,22 +298,27 @@ export default function History() {
                     {sessionDetail.messages.map((message) => (
                       <div
                         key={message.id}
-                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                       >
                         <div
                           className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                            message.role === 'user'
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-100 text-gray-900'
+                            message.role === "user"
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-100 text-gray-900"
                           }`}
                         >
                           <div className="text-xs opacity-70 mb-1">
-                            {new Date(message.timestamp).toLocaleTimeString([], {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {new Date(message.timestamp).toLocaleTimeString(
+                              [],
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              },
+                            )}
                           </div>
-                          <div className="whitespace-pre-wrap">{message.content}</div>
+                          <div className="whitespace-pre-wrap">
+                            {message.content}
+                          </div>
                           {message.pedagogical_move && (
                             <div className="mt-2 pt-2 border-t border-gray-300 text-xs opacity-70">
                               Move: {message.pedagogical_move}
